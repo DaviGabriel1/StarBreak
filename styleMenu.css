@@ -1,0 +1,23 @@
+canvas {
+    background-color: black;
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+.nomeJogo {
+    color: orange;
+    font-size: 100px;
+    position: absolute;
+    left: 40%;
+    top: 40%;
+}
+.instrucao {
+    color: white;
+    position: absolute;
+    left: 45%;
+    top: 50%;
+    background: transparent;
+    border: none;
+    outline: none;
+}

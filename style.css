@@ -1,0 +1,44 @@
+
+ /* Estilo para o elemento canvas */
+canvas {
+    background-color: black;
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+.navePrincipal {
+    width: auto;
+    height: auto;
+    position: absolute;
+    top: 90%; /*altura vertical*/
+    left: 50%; /*posição horizontal (meio)*/
+    transform: translate(-50%, -50%); /*deixa a nave centralizada*/
+}
+.tiro {
+    width: 9px;
+    height: 54px;
+    position: absolute;
+    background-image: url(./imagens/lasers/laserPadraov2.png);
+
+}
+.naveInimigaPadrao {
+    width: auto;
+    height: auto;
+    position: absolute;
+}
+.meteoro {
+    width: 150px;
+    height: 100px;
+    position: absolute;
+    background-image: url(./imagens/naveInimigaPadrao.PNG);
+}
+.vidaPlaneta {
+    color: white;
+    position: absolute;
+}
+.quantVida {
+    color: white;
+    position: absolute;
+    left: 7%;
+}
