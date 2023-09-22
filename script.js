@@ -34,7 +34,6 @@ textoVida.textContent = vidaPlaneta;
 var pontuacao = 0;
 var textoPontuacao = document.getElementById("pontuacao");
 textoPontuacao.textContent = pontuacao;
-
 var vidaInimigoPadrao = [];
 
 var teclaPressionada;
@@ -44,8 +43,8 @@ const backgroundAudio = new Audio('./trilhasSonoras/efeitosonorotiro.mp3'); // S
 setInterval(criacaoMeteoros, 2000);
 
 window.addEventListener('resize', function () {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
+  canvas.width = window.screen.width;
+  canvas.height = window.screen.height;
   // Também é necessário recriar as estrelas após redimensionar o canvas
   stars = [];
   for (var i = 0; i < 100; i++) {
@@ -197,7 +196,7 @@ function controlaMeteoros() {
 
 function verificarDerrota(){
   if(vidaPlaneta ==0){
-  window.location.href = "menuInicial.html";
+  window.location.href = "telaGameOver.html";
 }}
 
 function verificarColisao(tiro){
