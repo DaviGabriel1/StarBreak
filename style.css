@@ -23,8 +23,8 @@ canvas {
 
 }
 .naveInimigaPadrao {
-    width: auto;
-    height: auto;
+    width: 150px;
+    height: 120px;
     position: absolute;
 }
 .meteoro {
@@ -38,6 +38,15 @@ canvas {
     position: absolute;
 }
 .quantVida {
+    color: white;
+    position: absolute;
+    left: 7%;
+}
+.texto-pont{
+    color: white;
+    position: absolute;
+}
+.pontuacao {
     color: white;
     position: absolute;
     left: 7%;

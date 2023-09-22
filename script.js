@@ -23,14 +23,34 @@ var tamanhoTelaAltura = window.innerHeight;
 var quantMeteoros = 150;
 var meteorosTotais;
 
+var tiros;
+
 var velocidadeMeteoro = 3;
 
 var vidaPlaneta = 100;
+var textoVida = document.getElementById("quantVida");
+textoVida.textContent = vidaPlaneta;
 
-var textoVida = document.getElementsByClassName("quantVida");
-textoVida[0].textContent = vidaPlaneta;
+var pontuacao = 0;
+var textoPontuacao = document.getElementById("pontuacao");
+textoPontuacao.textContent = pontuacao;
+
+var vidaInimigoPadrao = [];
+
+var teclaPressionada;
+
 
 setInterval(criacaoMeteoros, 2000);
+
+window.addEventListener('resize', function () {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  // Também é necessário recriar as estrelas após redimensionar o canvas
+  stars = [];
+  for (var i = 0; i < 100; i++) {
+      stars.push(createStar());
+  }
+});
 
 
 // Função para criar uma estrela aleatória
@@ -74,28 +94,52 @@ function animate() {
 // Inicia a animação
 animate();
 function atualizarPosicaoAtualNave() {
+  // Garanta que a posição horizontal da nave esteja dentro dos limites da tela
+  posicaoHorizontal = Math.max(0, Math.min(100, posicaoHorizontal));
+  // Garanta que a posição vertical da nave esteja dentro dos limites da tela
+  posicaoVertical = Math.max(0, Math.min(100, posicaoVertical));
     navePrincipal.style.left = posicaoHorizontal+'%';
     navePrincipal.style.top = posicaoVertical+'%';
 }
 document.addEventListener('keydown', (event) => {
     switch (event.key) {
+    case 'ArrowLeft' && ' ':
+      posicaoHorizontal -= step;
+      atirar();
+      break;
+    /*case 'ArrowRight' && ' ':  
+      posicaoHorizontal += step;
+      teclaPressionada=true;
+      atirar();
+        break;*/
     case 'ArrowLeft':
       posicaoHorizontal -= step;
       break;
     case 'ArrowRight':
-      posicaoHorizontal += step;
+      if(navePrincipal.style.left<="96%"){
+        posicaoHorizontal += step;
+      }
       break;
     case 'ArrowUp':
       posicaoVertical -=step;
       break;
     case 'ArrowDown':
+      if(navePrincipal.style.top=="94%"){
       posicaoVertical +=step;
+      }
       break;  
       case ' ':
         atirar();
         break;
   }
   atualizarPosicaoAtualNave()
+});
+
+document.addEventListener('keyup', (event) => {
+  if (event.key === 'ArrowRight') {
+      // Quando a tecla for liberada, marque que a tecla não está mais pressionada
+     teclaPressionada = false;
+  }
 });
 
 function atirar() {
@@ -106,11 +150,12 @@ function atirar() {
     const personagemRect = navePrincipal.getBoundingClientRect();
     tiro.style.left = (personagemRect.left + personagemRect.width / 2) + 'px';
     tiro.style.top = (personagemRect.top + personagemRect.height / 2) + 'px';
-    tiro.style.backgroundImage= 'url(./imagens/lasers/laserPadraov2.png)'
+    //tiro.style.backgroundImage= 'url(./imagens/lasers/laserPadraov2.png)'
     const tiroInterval = setInterval(() => {
         const tiroRect = tiro.getBoundingClientRect();
         if (tiroRect.top > 0) {
           tiro.style.top = (parseInt(tiro.style.top) || 0) - velocidadeTiro + 'px';
+          verificarColisao(tiro);
         } else {
           clearInterval(tiroInterval);
           document.body.removeChild(tiro);
@@ -120,7 +165,7 @@ function atirar() {
 }
 function criacaoMeteoros (){
     var x = Math.random()*tamanhoTelaLargura;
-    var y=0;
+    var y=-100;
     var meteoro = document.createElement("div");
     meteoro.classList.add('meteoro');
     meteoro.id = 'meteoro';
@@ -128,6 +173,7 @@ function criacaoMeteoros (){
     meteoro.style.left=x+"px";
     meteoro.style.backgroundImage="./imagens/glitch_meteor/meteor0001.png"
     document.body.appendChild(meteoro)
+    vidaInimigoPadrao.push(3); //inicializar o inimigo com vida 3
     quantMeteoros--;
 }
 function controlaMeteoros() {
@@ -140,7 +186,7 @@ function controlaMeteoros() {
       meteorosTotais[i].style.top = pi + "px";
       if (pi > tamanhoTelaAltura) {
         vidaPlaneta -= 10;
-        textoVida[0].textContent = vidaPlaneta;
+        textoVida.textContent = vidaPlaneta;
         meteorosTotais[i].remove();
       }
     }
@@ -152,4 +198,43 @@ function verificarDerrota(){
   window.location.href = "menuInicial.html";
 }}
 
+function verificarColisao(tiro){
+  var tiroRect = tiro.getBoundingClientRect();
+  var tam = meteorosTotais.length;
+  for (var i = 0; i < tam; i++) {
+    if (meteorosTotais[i]) {
+      vidaInimigoPadrao[i] = 3;
+      var meteoroRect = meteorosTotais[i].getBoundingClientRect();
+
+      // Coordenadas das extremidades do tiro
+      var tiroTop = tiroRect.top;
+      var tiroBottom = tiroRect.bottom;
+      var tiroLeft = tiroRect.left;
+      var tiroRight = tiroRect.right;
+
+      // Coordenadas das extremidades do meteoro
+      var meteoroTop = meteoroRect.top;
+      var meteoroBottom = meteoroRect.bottom;
+      var meteoroLeft = meteoroRect.left;
+      var meteoroRight = meteoroRect.right;
+
+      // Verifica a colisão
+      if (
+        tiroBottom >= meteoroTop &&
+        tiroTop <= meteoroBottom &&
+        tiroRight >= meteoroLeft &&
+        tiroLeft <= meteoroRight
+      ) {
+        // Colisão detectada, remova o tiro e o meteoro
+        
+        tiro.remove();
+        
+        meteorosTotais[i].remove();
+        pontuacao++;
+        textoPontuacao.textContent = pontuacao;
+        
+      }
+    }
+  }
+}
 

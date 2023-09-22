@@ -39,3 +39,5 @@ function animate() {
 
 // Inicia a animação
 animate();
+const backgroundAudio = new Audio('./trilhasSonoras/trilhaSonoraMenuSpaceBreak.mp3');
+backgroundAudio.play();
