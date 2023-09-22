@@ -39,6 +39,7 @@ var vidaInimigoPadrao = [];
 
 var teclaPressionada;
 
+const backgroundAudio = new Audio('./trilhasSonoras/efeitosonorotiro.mp3'); // Substitua com o caminho do seu arquivo de som
 
 setInterval(criacaoMeteoros, 2000);
 
@@ -154,6 +155,7 @@ function atirar() {
     const tiroInterval = setInterval(() => {
         const tiroRect = tiro.getBoundingClientRect();
         if (tiroRect.top > 0) {
+          backgroundAudio.play();
           tiro.style.top = (parseInt(tiro.style.top) || 0) - velocidadeTiro + 'px';
           verificarColisao(tiro);
         } else {
