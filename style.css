@@ -33,6 +33,18 @@ canvas {
     position: absolute;
     background-image: url(./imagens/naveInimigaPadrao.PNG);
 }
+.miniBoss {
+    width: 348px;
+    height: 279px;
+    position: absolute;
+    background-image: url(./imagens/naveInimigaVermelhaGrande.PNG);
+}
+#explosao {
+    background: url(./imagens/explosao.gif);
+    width: 157px;
+    height: 229px;
+    position: absolute;
+}
 .vidaPlaneta {
     color: white;
     position: absolute;

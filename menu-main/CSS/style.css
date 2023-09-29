@@ -3,7 +3,7 @@
     padding: 0; 
 }
 body{
-    background: url(./imagens/fundo.gif);
+    background: url(/fundo.gif);
     background-repeat: no-repeat;
     background-size: cover;
 }
@@ -25,7 +25,6 @@ body{
     cursor: pointer;
     background: transparent;
     border: none;
-    text-decoration: none;
 }
 
 .botao:hover {

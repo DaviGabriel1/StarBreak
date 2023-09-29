@@ -21,7 +21,9 @@ var tamanhoTelaLargura = window.innerWidth;
 var tamanhoTelaAltura = window.innerHeight;
 
 var quantMeteoros = 150;
+var quantminiBoss = 70;
 var meteorosTotais;
+var miniBossTotais;
 
 var tiros;
 
@@ -35,6 +37,7 @@ var pontuacao = 0;
 var textoPontuacao = document.getElementById("pontuacao");
 textoPontuacao.textContent = pontuacao;
 var vidaInimigoPadrao = [];
+var velocidademiniBoss = 1;
 
 var teclaPressionada;
 
@@ -43,9 +46,11 @@ const backgroundAudio = new Audio('./trilhasSonoras/efeitosonorotiro.mp3'); // S
 const intervaloDeTiro = 200; // Intervalo de tiro em milissegundos
 
 var vidaInimigoatt =1;
+var intervaloGeracaoInimigo = 2000;
 
 
-setInterval(criacaoMeteoros, 2000);
+setInterval(criacaoMeteoros, intervaloGeracaoInimigo-(pontuacao*180));
+setInterval(criacaoMiniBoss, 10000);
 
 window.addEventListener('resize', function () {
   canvas.width = window.screen.width;
@@ -92,6 +97,7 @@ function animate() {
     }
     controlaMeteoros();
     verificarDerrota();
+    controlaMiniBoss();
     // Repete a animação
     requestAnimationFrame(animate);
 }
@@ -105,7 +111,9 @@ function atualizarPosicaoAtualNave() {
   posicaoVertical = Math.max(0, Math.min(100, posicaoVertical));
     navePrincipal.style.left = posicaoHorizontal+'%';
     navePrincipal.style.top = posicaoVertical+'%';
-}let teclasPressionadas = {}; // Objeto para rastrear teclas pressionadas
+}
+
+let teclasPressionadas = {}; // Objeto para rastrear teclas pressionadas
 
 function atualizarPosicaoAtualNave() {
   navePrincipal.style.left = posicaoHorizontal + '%';
@@ -170,7 +178,7 @@ function atirar() {
       
 }
 function criacaoMeteoros (){
-    var x = Math.random()*tamanhoTelaLargura;
+    var x = (Math.random()*tamanhoTelaLargura)-150;
     var y=-100;
     var meteoro = document.createElement("div");
     meteoro.classList.add('meteoro');
@@ -200,6 +208,45 @@ function controlaMeteoros() {
   }
 }
 
+function criacaoMiniBoss (){
+  var x = (Math.random()*tamanhoTelaLargura)-348;
+  var y=-280;
+  if(x<348){
+    x+=348;
+  }
+  var miniBoss = document.createElement("div");
+  miniBoss.classList.add('miniBoss');
+  miniBoss.id = 'miniBoss';
+  miniBoss.style.top=y+"px";
+  miniBoss.style.left=x+"px";
+  miniBoss.style.backgroundImage="./imagens/naveInimigaVermelhaGrande.PNG"
+  miniBoss.vida = 50;
+  document.body.appendChild(miniBoss)
+  vidaInimigoPadrao.push(3); //inicializar o inimigo com vida 3
+  quantminiBoss--;
+}
+function controlaMiniBoss() {
+miniBossTotais = document.getElementsByClassName("miniBoss");
+var tam = miniBossTotais.length;
+for (var i = 0; i < tam; i++) {
+  if (miniBossTotais[i]) {
+    var pi = miniBossTotais[i].offsetTop;
+    pi += velocidademiniBoss;
+    miniBossTotais[i].style.top = pi + "px";
+    if (pi > tamanhoTelaAltura) {
+      vidaPlaneta -= 10;
+      textoVida.textContent = vidaPlaneta;
+      miniBossTotais[i].remove();
+    }
+  }
+}
+}
+
+
+
+
+
+
 function verificarDerrota(){
   if(vidaPlaneta ==0){
   window.location.href = "telaGameOver.html";
@@ -208,6 +255,7 @@ function verificarDerrota(){
 function verificarColisao(tiro){
   var tiroRect = tiro.getBoundingClientRect();
   var tam = meteorosTotais.length;
+  var tamMB = miniBossTotais.length;
   for (var i = 0; i < tam; i++) {
     if (meteorosTotais[i]) {
       vidaInimigoPadrao[i] = 3;
@@ -237,13 +285,91 @@ function verificarColisao(tiro){
         tiro.remove();
         meteorosTotais[i].vida--;
         if(meteorosTotais[i].vida<=0){
-          meteorosTotais[i].style.backgroundImage="./imagens/SpritesExplosao";
         meteorosTotais[i].remove();
+        
         pontuacao++;
         textoPontuacao.textContent = pontuacao;
         }
       }
     }
   }
-}
 
+  for (var i = 0; i < tam; i++) {
+    if (miniBossTotais[i]) {
+      vidaInimigoPadrao[i] = 3;
+      var miniBossRect = miniBossTotais[i].getBoundingClientRect();
+
+      // Coordenadas das extremidades do tiro
+      var tiroTop = tiroRect.top;
+      var tiroBottom = tiroRect.bottom;
+      var tiroLeft = tiroRect.left;
+      var tiroRight = tiroRect.right;
+
+      // Coordenadas das extremidades do meteoro
+      var meteoroTop = miniBossRect.top;
+      var meteoroBottom = miniBossRect.bottom;
+      var meteoroLeft = miniBossRect.left;
+      var meteoroRight = miniBossRect.right;
+
+      // Verifica a colisão
+      if (
+        tiroBottom >= meteoroTop &&
+        tiroTop <= meteoroBottom &&
+        tiroRight >= meteoroLeft &&
+        tiroLeft <= meteoroRight
+      ) {
+        // Colisão detectada, remova o tiro e o meteoro
+        
+        tiro.remove();
+        miniBossTotais[i].vida--;
+        if(miniBossTotais[i].vida<=0){
+        var explosao = document.createElement("div");
+        explosao.classList.add('esplosao');
+        explosao.id = 'explosao';
+        explosao.style.top=miniBossRect.top+"px";
+        explosao.style.left=meteoroLeft+"px";
+        explosao.style.bottom=meteoroBottom+"px";
+        explosao.style.right=meteoroRight+"px";
+        explosao.style.backgroundImage="./imagens/naveInimigaPadrao.PNG";
+        document.body.appendChild(explosao)
+        explosao.remove();
+        pontuacao++;
+        textoPontuacao.textContent = pontuacao;
+        miniBossTotais[i].remove();
+        }
+      }
+    }
+  }
+}
+function aumentaQuantidadeInimigo() {
+  if(pontuacao>10){
+    intervaloGeracaoInimigo=50;
+  }
+  if(pontuacao>20){
+    intervaloGeracaoInimigo-=1700;
+  }
+  if(pontuacao>30){
+    intervaloGeracaoInimigo-=1600;
+  }
+  if(pontuacao==40){
+    intervaloGeracaoInimigo-=1500;
+  }
+  if(pontuacao==50){
+    intervaloGeracaoInimigo-=1200;
+  }
+  if(pontuacao==60){
+    intervaloGeracaoInimigo-=1000;
+  }
+  if(pontuacao==70){
+    intervaloGeracaoInimigo-=800;
+  }
+  if(pontuacao==80){
+    intervaloGeracaoInimigo-=700;
+  }
+  if(pontuacao==90){
+    intervaloGeracaoInimigo-=700;
+  }
+  if(pontuacao==100){
+    intervaloGeracaoInimigo-=700;
+  }
+}
