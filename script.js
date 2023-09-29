@@ -40,6 +40,11 @@ var teclaPressionada;
 
 const backgroundAudio = new Audio('./trilhasSonoras/efeitosonorotiro.mp3'); // Substitua com o caminho do seu arquivo de som
 
+const intervaloDeTiro = 200; // Intervalo de tiro em milissegundos
+
+var vidaInimigoatt =1;
+
+
 setInterval(criacaoMeteoros, 2000);
 
 window.addEventListener('resize', function () {
@@ -103,15 +108,6 @@ function atualizarPosicaoAtualNave() {
 }
 document.addEventListener('keydown', (event) => {
     switch (event.key) {
-    case 'ArrowLeft' && ' ':
-      posicaoHorizontal -= step;
-      atirar();
-      break;
-    /*case 'ArrowRight' && ' ':  
-      posicaoHorizontal += step;
-      teclaPressionada=true;
-      atirar();
-        break;*/
     case 'ArrowLeft':
       posicaoHorizontal -= step;
       break;
@@ -125,22 +121,17 @@ document.addEventListener('keydown', (event) => {
       break;
     case 'ArrowDown':
       if(navePrincipal.style.top=="94%"){
-      posicaoVertical +=step;
+        break;  
       }
-      break;  
+      posicaoVertical +=step;
+      break;
       case ' ':
         atirar();
-        break;
+        break;  
   }
   atualizarPosicaoAtualNave()
 });
 
-document.addEventListener('keyup', (event) => {
-  if (event.key === 'ArrowRight') {
-      // Quando a tecla for liberada, marque que a tecla não está mais pressionada
-     teclaPressionada = false;
-  }
-});
 
 function atirar() {
     const tiro = document.createElement('div');
@@ -173,6 +164,7 @@ function criacaoMeteoros (){
     meteoro.style.top=y+"px";
     meteoro.style.left=x+"px";
     meteoro.style.backgroundImage="./imagens/glitch_meteor/meteor0001.png"
+    meteoro.vida = 3;
     document.body.appendChild(meteoro)
     vidaInimigoPadrao.push(3); //inicializar o inimigo com vida 3
     quantMeteoros--;
@@ -229,11 +221,12 @@ function verificarColisao(tiro){
         // Colisão detectada, remova o tiro e o meteoro
         
         tiro.remove();
-        
+        meteorosTotais[i].vida--;
+        if(meteorosTotais[i].vida<=0){
         meteorosTotais[i].remove();
         pontuacao++;
         textoPontuacao.textContent = pontuacao;
-        
+        }
       }
     }
   }

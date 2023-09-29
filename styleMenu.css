@@ -1,23 +1,75 @@
-canvas {
+*{ 
+    margin:  0;
+    padding: 0; 
+}
+/*--------------------------------------------------------------------------------*/
+.logo_botao{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    gap: 32px;
+}
+body{
     background-color: black;
+}
+
+/*.logo{
     display: block;
-    position: absolute;
-    top: 0;
-    left: 0;
+    margin: 0 auto;
+}*/
+
+/*.botao_start{
+    width: 100vw;
+    height: 100vh;  
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;     
+}*/
+
+.botao{
+    width: 350px;
+    height: 75px;
+    color: rgb(255, 255, 255);
+    font-family: 'soloist';
+    font-size: 25px;
+    background-color: rgb(0, 0, 0);
+    border-radius: 35px;
+    border: 1.5px solid rgb(255, 255, 255);
+    transition: all 0.3s;
+    cursor: pointer;
+    box-shadow: 0 0 10px rgb(255, 255, 255);
+    text-shadow: 0 0 1px rgb(255, 255, 255);
+    text-decoration: none;
 }
-.nomeJogo {
-    color: orange;
-    font-size: 100px;
-    position: absolute;
-    left: 40%;
-    top: 40%;
+
+.botao:hover {
+    transform: scale(1.1); /* Aumentar o tamanho em 10% ao passar o mouse */
 }
-.instrucao {
-    color: white;
+/*.text{
     position: absolute;
-    left: 45%;
-    top: 50%;
-    background: transparent;
-    border: none;
-    outline: none;
-}
+    top: 50%; 
+    right: 50%;
+    transform: translate(50%,-50%);
+    text-transform: uppercase;
+    font-family: verdana;
+    font-size: 10em;
+    font-weight: 700;
+    color: #d9b903;
+    text-shadow: 1px 1px 1px #919191,
+        1px 2px 1px #919191,
+        1px 3px 1px #919191,
+        1px 4px 1px #919191,
+        1px 5px 1px #919191,
+        1px 6px 1px #919191,
+        1px 7px 1px #919191,
+        1px 8px 1px #919191,
+        1px 9px 1px #919191,
+        1px 10px 1px #919191,
+    1px 18px 6px rgba(16,16,16,0.4),
+    1px 22px 10px rgba(16,16,16,0.2),
+    1px 25px 35px rgba(16,16,16,0.2),
+    1px 30px 60px rgba(16,16,16,0.4);
+}*/ 

@@ -1,19 +1,30 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="./styleMenu.css">
-    <link rel="stylesheet" href="scriptMenu.js">
-    <title>Document</title>
+    <link rel="stylesheet" href="./scriptMenu.js">
+    <style>
+        @font-face{
+        font-family:'soloist';
+        src: url('./imagens/menu/soloist1.ttf') format(truetype);/*, url('Alien Spaceship.ttf') format(truetype)*/
+        font-weight: normal;
+        font-style: normal;
+    }
+    </style>
+    <title>Menu</title>
 </head>
+
 <body>
-    <canvas id="starfield"></canvas>
-    <script src="script.js"></script>
-    <div class="nomeJogo">StarBreak</div>
-    <button class="instrucao"><a href="./index.html">clique enter para continuar</a></button>
-    <audio id="background" autoplay loop>
-        <source src="./trilhasSonoras/trilhaSonoraMenuSpaceBreak.mp3" type="audio/mpeg">
-    </audio>
+    <div class="logo_botao">
+        <div class="titulo">
+            <img class="logo" src="./imagens/menu/logo.png" alt="">
+        </div>     
+    
+        <div class="botao_start">
+            <button class="botao"><a href="./index.html"><h1>START</h1></a></button>
+        </div>
+    </div>      
 </body>
 </html>
