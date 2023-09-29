@@ -13,7 +13,7 @@ var stars = [];
 const navePrincipal = document.getElementById('navePrincipal');// Transportar o CSS
 let posicaoHorizontal = 50;
 let posicaoVertical = 95;
-const step = 1; //passo para cada click
+const step = 0.7; //passo para cada click
 
 var velocidadeTiro = 5; //velocidade dos tiros (pode variar com power up)
 
@@ -105,34 +105,48 @@ function atualizarPosicaoAtualNave() {
   posicaoVertical = Math.max(0, Math.min(100, posicaoVertical));
     navePrincipal.style.left = posicaoHorizontal+'%';
     navePrincipal.style.top = posicaoVertical+'%';
+}let teclasPressionadas = {}; // Objeto para rastrear teclas pressionadas
+
+function atualizarPosicaoAtualNave() {
+  navePrincipal.style.left = posicaoHorizontal + '%';
+  navePrincipal.style.top = posicaoVertical + '%';
 }
+
 document.addEventListener('keydown', (event) => {
-    switch (event.key) {
-    case 'ArrowLeft':
-      posicaoHorizontal -= step;
-      break;
-    case 'ArrowRight':
-      if(navePrincipal.style.left<="96%"){
-        posicaoHorizontal += step;
-      }
-      break;
-    case 'ArrowUp':
-      posicaoVertical -=step;
-      break;
-    case 'ArrowDown':
-      if(navePrincipal.style.top=="94%"){
-        break;  
-      }
-      posicaoVertical +=step;
-      break;
-      case ' ':
-        atirar();
-        break;  
-  }
-  atualizarPosicaoAtualNave()
+  teclasPressionadas[event.key] = true; // Marcar a tecla como pressionada
 });
 
+document.addEventListener('keyup', (event) => {
+  delete teclasPressionadas[event.key]; // Marcar a tecla como liberada
+});
 
+function atualizarMovimento() {
+  if ('ArrowLeft' in teclasPressionadas) {
+    posicaoHorizontal -= step;
+  }
+  if ('ArrowRight' in teclasPressionadas && posicaoHorizontal <= 96) {
+    posicaoHorizontal += step;
+  }
+  if ('ArrowUp' in teclasPressionadas) {
+    posicaoVertical -= step;
+  }
+  if ('ArrowDown' in teclasPressionadas && posicaoVertical <= 94) {
+    posicaoVertical += step;
+  }
+  
+  atualizarPosicaoAtualNave();
+  requestAnimationFrame(atualizarMovimento); // Chama a função novamente no próximo quadro de animação
+}
+
+// Adicione um evento de tiro (por exemplo, pressionando a barra de espaço)
+document.addEventListener('keydown', (event) => {
+  if (event.key === ' ') {
+    atirar();
+  }
+});
+
+// Inicie o loop de atualização
+atualizarMovimento();
 function atirar() {
     const tiro = document.createElement('div');
     tiro.classList.add('tiro');
@@ -223,6 +237,7 @@ function verificarColisao(tiro){
         tiro.remove();
         meteorosTotais[i].vida--;
         if(meteorosTotais[i].vida<=0){
+          meteorosTotais[i].style.backgroundImage="./imagens/SpritesExplosao";
         meteorosTotais[i].remove();
         pontuacao++;
         textoPontuacao.textContent = pontuacao;

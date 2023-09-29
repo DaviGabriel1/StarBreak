@@ -36,20 +36,22 @@ canvas {
 .vidaPlaneta {
     color: white;
     position: absolute;
+    top: 8%;
 }
-.quantVida {
+#quantVida {
     color: white;
     position: absolute;
-    left: 7%;
+    left: 5%;
+    top: 8%;
 }
 .texto-pont{
     color: white;
     position: absolute;
 }
-.pontuacao {
+#pontuacao {
     color: white;
     position: absolute;
-    left: 7%;
+    left: 9%;
 }
 html {
     height: 100%;
