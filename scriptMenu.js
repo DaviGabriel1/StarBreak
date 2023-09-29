@@ -1,2 +1,2 @@
-const backgroundAudio = new Audio('./trilhasSonoras/trilhaSonoraMenuSpaceBreak.mp3');
-backgroundAudio.play();
+const backgroundAudioMenu = new Audio("./trilhasSonoras/trilhaSonoraMenuSpaceBreak.mp3");
+backgroundAudioMenu.play();
