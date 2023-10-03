@@ -181,7 +181,7 @@ function atirar() {
       
 }
 function criacaoMeteoros (){
-    var x = (Math.random()*tamanhoTelaLargura)-150;
+    var x = (Math.random()*tamanhoTelaLargura);
     var y=-100;
     var meteoro = document.createElement("div");
     meteoro.classList.add('meteoro');
@@ -453,7 +453,7 @@ function aumentarDificuldade() {
   if (pontuacao <= 10) {
     taxaDeInimigosPadrao = 2000;
     taxaDeInimigosVermelho = 10000;
-    taxaDeInimigosPreto = 10000;
+    taxaDeInimigosPreto = 3000;
     setInterval(criacaoMeteoros, taxaDeInimigosPadrao);
   setInterval(criacaoMiniBoss, taxaDeInimigosVermelho);
   setInterval(criacaoNaveInimigaPreto, taxaDeInimigosPreto);
