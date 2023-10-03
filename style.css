@@ -71,6 +71,20 @@ canvas {
     position: absolute;
     left: 9%;
 }
+.power-up-velocidade{
+    width: 32px;
+    height: 32px;
+    position: absolute;
+    border-radius: 65px;
+    background-image: url(./imagens/power-ups/power-up-velocidade.png);
+}
+.power-up-maisTiro{
+    width: 32px;
+    height: 32px;
+    position: absolute;
+    border-radius: 65px;
+    background-image: url(./imagens/power-ups/power-up-maisTiro.png);
+}
 html {
     height: 100%;
     width: 100%;

@@ -13,7 +13,7 @@ var stars = [];
 const navePrincipal = document.getElementById('navePrincipal');// Transportar o CSS
 let posicaoHorizontal = 50;
 let posicaoVertical = 95;
-const step = 0.7; //passo para cada click
+let step = 0.7; //passo para cada click
 
 var velocidadeTiro = 5; //velocidade dos tiros (pode variar com power up)
 
@@ -53,6 +53,13 @@ var naveInimigaPretoTotais;
 
 var alcancouLadoDireito;
 var alcancouLadoEsquerdo;
+
+var vidaInimigoPadrao=3;
+var vidaInimigoVermelho=60;
+var vidaInimigoPreto=9;
+var quantPowerUps=10;
+var powerupTotais;
+var powerUpVelocidadeAtivado;
 
 window.addEventListener('resize', function () {
   canvas.width = window.screen.width;
@@ -101,6 +108,8 @@ function animate() {
     verificarDerrota();
     controlaMiniBoss();
     controlaNaveInimigaPreto();
+    controlaPowerUps();
+    verificarColisaoPowerUps();
     // Repete a animação
     requestAnimationFrame(animate);
 }
@@ -181,17 +190,20 @@ function atirar() {
       
 }
 function criacaoMeteoros (){
-    var x = (Math.random()*tamanhoTelaLargura);
-    var y=-100;
+  var x = (Math.random()*tamanhoTelaLargura)-150;
+  var y=-100;
+  if(x<150){
+    x+=150;
+  }
     var meteoro = document.createElement("div");
     meteoro.classList.add('meteoro');
     meteoro.id = 'meteoro';
     meteoro.style.top=y+"px";
     meteoro.style.left=x+"px";
     meteoro.style.backgroundImage="./imagens/glitch_meteor/meteor0001.png"
-    meteoro.vida = 3;
+    meteoro.vida = vidaInimigoPadrao;
     document.body.appendChild(meteoro)
-    vidaInimigoPadrao.push(3); //inicializar o inimigo com vida 3
+   // vidaInimigoPadrao.push(3); //inicializar o inimigo com vida 3
     quantMeteoros--;
 }
 function controlaMeteoros() {
@@ -219,9 +231,9 @@ var x = (tamanhoTelaLargura/2);
     naveInimigaPreto.style.top=y+"px";
     naveInimigaPreto.style.left=x+"px";
     naveInimigaPreto.style.backgroundImage="./imagens/naveInimigaPreto.PNG"
-    naveInimigaPreto.vida = 3;
+    naveInimigaPreto.vida = vidaInimigoPreto;
     document.body.appendChild(naveInimigaPreto)
-    vidaInimigoPadrao.push(3); //inicializar o inimigo com vida 3
+    //vidaInimigoPadrao.push(3); //inicializar o inimigo com vida 3
     quantnaveInimigaPretos--;
 }
 function controlaNaveInimigaPreto() {
@@ -272,9 +284,9 @@ function criacaoMiniBoss (){
   miniBoss.style.top=y+"px";
   miniBoss.style.left=x+"px";
   miniBoss.style.backgroundImage="./imagens/naveInimigaVermelhaGrande.PNG"
-  miniBoss.vida = 50;
+  miniBoss.vida = vidaInimigoVermelho;
   document.body.appendChild(miniBoss)
-  vidaInimigoPadrao.push(3); //inicializar o inimigo com vida 3
+  //vidaInimigoPadrao.push(3); //inicializar o inimigo com vida 3
   quantminiBoss--;
 }
 function controlaMiniBoss() {
@@ -292,6 +304,47 @@ for (var i = 0; i < tam; i++) {
     }
   }
 }
+}
+
+function criarPowerUps(){
+  var x = (Math.random()*tamanhoTelaLargura);
+  var y=0;
+  var powerUpVelocidade = document.createElement("div"); //power up velocidade
+  powerUpVelocidade.classList.add('power-up-velocidade')
+  powerUpVelocidade.id = 'power-up-velocidade';
+  powerUpVelocidade.style.top = y+"px";
+  powerUpVelocidade.style.left = x+"px";
+  powerUpVelocidade.style.backgroundImage = "./imagens/power-ups/power-up-velocidade.png"
+  document.body.appendChild(powerUpVelocidade);
+  quantPowerUps--;
+}
+function criarPowerUpTiro(){ //TODO power up tiro controle
+  var x = (Math.random()*tamanhoTelaLargura);
+  var y=0;
+  var powerUpTiro = document.createElement("div"); //power up Tiro
+  powerUpTiro.classList.add('power-up-maisTiro')
+  powerUpTiro.id = 'power-up-maisTiro';
+  powerUpTiro.style.top = y+"px";
+  powerUpTiro.style.left = x+"px";
+  powerUpTiro.style.backgroundImage = "./imagens/power-ups/power-up-maisTiro.png"
+  document.body.appendChild(powerUpTiro);
+  quantPowerUps--;
+}
+
+function controlaPowerUps(){
+  powerupTotais = document.getElementsByClassName("power-up-velocidade");
+  var tam = powerupTotais.length;
+  for (var i = 0; i < tam; i++) {
+    if (powerupTotais[i]) {
+      var pi = powerupTotais[i].offsetTop;
+      pi += 2;
+      powerupTotais[i].style.top = pi + "px";
+      
+      if (pi > tamanhoTelaAltura+279) {
+        powerupTotais[i].remove();
+      }
+    }
+  }
 }
 
 
@@ -491,4 +544,43 @@ function aumentarDificuldade() {
   
 }
 
+function verificarColisaoPowerUps() {
+  var powerUpTotais = document.getElementsByClassName("power-up-velocidade");
+  
+  var navePrincipalRect = navePrincipal.getBoundingClientRect();
+
+  for (var i = 0; i < powerUpTotais.length; i++) {
+    var powerUpRect = powerUpTotais[i].getBoundingClientRect();
+
+    // Coordenadas das extremidades do power-up
+    var powerUpTop = powerUpRect.top;
+    var powerUpBottom = powerUpRect.bottom;
+    var powerUpLeft = powerUpRect.left;
+    var powerUpRight = powerUpRect.right;
+
+    // Coordenadas das extremidades da nave principal
+    var naveTop = navePrincipalRect.top;
+    var naveBottom = navePrincipalRect.bottom;
+    var naveLeft = navePrincipalRect.left;
+    var naveRight = navePrincipalRect.right;
+
+    // Verifica a colisão
+    if (
+      powerUpBottom >= naveTop &&
+      powerUpTop <= naveBottom &&
+      powerUpRight >= naveLeft &&
+      powerUpLeft <= naveRight
+    ) {
+      powerUpTotais[i].remove();
+      powerUpVelocidadeAtivado= true;
+        step *=2;
+      
+    }
+  }
+}
+
 aumentarDificuldade();
+
+setInterval(criarPowerUps, 1500);
+
+//TODO: tempo de powerUp
