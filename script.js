@@ -48,9 +48,11 @@ const intervaloDeTiro = 200; // Intervalo de tiro em milissegundos
 var vidaInimigoatt =1;
 var intervaloGeracaoInimigo = 2000;
 
+var quantnaveInimigaPretos;
+var naveInimigaPretoTotais;
 
-setInterval(criacaoMeteoros, intervaloGeracaoInimigo-(pontuacao*180));
-setInterval(criacaoMiniBoss, 10000);
+var alcancouLadoDireito;
+var alcancouLadoEsquerdo;
 
 window.addEventListener('resize', function () {
   canvas.width = window.screen.width;
@@ -98,6 +100,7 @@ function animate() {
     controlaMeteoros();
     verificarDerrota();
     controlaMiniBoss();
+    controlaNaveInimigaPreto();
     // Repete a animação
     requestAnimationFrame(animate);
 }
@@ -199,10 +202,59 @@ function controlaMeteoros() {
       var pi = meteorosTotais[i].offsetTop;
       pi += velocidadeMeteoro;
       meteorosTotais[i].style.top = pi + "px";
-      if (pi > tamanhoTelaAltura) {
+      if (pi > tamanhoTelaAltura+150) {
         vidaPlaneta -= 10;
         textoVida.textContent = vidaPlaneta;
         meteorosTotais[i].remove();
+      }
+    }
+  }
+}
+function criacaoNaveInimigaPreto(){
+var x = (tamanhoTelaLargura/2);
+    var y=-100;
+    var naveInimigaPreto = document.createElement("div");
+    naveInimigaPreto.classList.add('naveInimigaPreto');
+    naveInimigaPreto.id = 'naveInimigaPreto';
+    naveInimigaPreto.style.top=y+"px";
+    naveInimigaPreto.style.left=x+"px";
+    naveInimigaPreto.style.backgroundImage="./imagens/naveInimigaPreto.PNG"
+    naveInimigaPreto.vida = 3;
+    document.body.appendChild(naveInimigaPreto)
+    vidaInimigoPadrao.push(3); //inicializar o inimigo com vida 3
+    quantnaveInimigaPretos--;
+}
+function controlaNaveInimigaPreto() {
+  naveInimigaPretoTotais = document.getElementsByClassName("naveInimigaPreto");
+  var tam = naveInimigaPretoTotais.length;
+  for (var i = 0; i < tam; i++) {
+    if (naveInimigaPretoTotais[i]) {
+      var pi = naveInimigaPretoTotais[i].offsetTop;
+      pi += velocidadeMeteoro-2;
+      var horiz= naveInimigaPretoTotais[i].offsetLeft;
+      if(horiz ==tamanhoTelaLargura-150){
+        alcancouLadoDireito=true;
+        alcancouLadoEsquerdo=false;
+      }
+      else if(horiz==0){
+        alcancouLadoDireito=false;
+        alcancouLadoEsquerdo=true;
+      }
+      if(alcancouLadoEsquerdo){
+        horiz += 3;
+      }
+      else if(alcancouLadoDireito){
+        horiz -=3;
+      }
+      else{
+        horiz +=3;
+      }
+      naveInimigaPretoTotais[i].style.top = pi + "px";
+      naveInimigaPretoTotais[i].style.left =horiz+"px";
+      if (pi > tamanhoTelaAltura+150) {
+        vidaPlaneta -= 10;
+        textoVida.textContent = vidaPlaneta;
+        naveInimigaPretoTotais[i].remove();
       }
     }
   }
@@ -233,8 +285,8 @@ for (var i = 0; i < tam; i++) {
     var pi = miniBossTotais[i].offsetTop;
     pi += velocidademiniBoss;
     miniBossTotais[i].style.top = pi + "px";
-    if (pi > tamanhoTelaAltura) {
-      vidaPlaneta -= 10;
+    if (pi > tamanhoTelaAltura+279) {
+      vidaPlaneta -= 20;
       textoVida.textContent = vidaPlaneta;
       miniBossTotais[i].remove();
     }
@@ -256,6 +308,7 @@ function verificarColisao(tiro){
   var tiroRect = tiro.getBoundingClientRect();
   var tam = meteorosTotais.length;
   var tamMB = miniBossTotais.length;
+  var tamNavePreta = naveInimigaPretoTotais.length;
   for (var i = 0; i < tam; i++) {
     if (meteorosTotais[i]) {
       vidaInimigoPadrao[i] = 3;
@@ -285,8 +338,8 @@ function verificarColisao(tiro){
         tiro.remove();
         meteorosTotais[i].vida--;
         if(meteorosTotais[i].vida<=0){
+        criarExplosao(meteoroTop,meteoroLeft)
         meteorosTotais[i].remove();
-        
         pontuacao++;
         textoPontuacao.textContent = pontuacao;
         }
@@ -323,53 +376,119 @@ function verificarColisao(tiro){
         tiro.remove();
         miniBossTotais[i].vida--;
         if(miniBossTotais[i].vida<=0){
-        var explosao = document.createElement("div");
-        explosao.classList.add('esplosao');
-        explosao.id = 'explosao';
-        explosao.style.top=miniBossRect.top+"px";
-        explosao.style.left=meteoroLeft+"px";
-        explosao.style.bottom=meteoroBottom+"px";
-        explosao.style.right=meteoroRight+"px";
-        explosao.style.backgroundImage="./imagens/naveInimigaPadrao.PNG";
-        document.body.appendChild(explosao)
-        explosao.remove();
+        criarExplosao(meteoroTop,meteoroLeft)
+        miniBossTotais[i].remove();
         pontuacao++;
         textoPontuacao.textContent = pontuacao;
-        miniBossTotais[i].remove();
+        }
+      }
+    }
+  }
+
+  for (var i = 0; i < tamNavePreta; i++) {
+    if (naveInimigaPretoTotais[i]) {
+      naveInimigaPretoTotais[i] = 3;
+      var meteoroRect = naveInimigaPretoTotais[i].getBoundingClientRect();
+
+      // Coordenadas das extremidades do tiro
+      var tiroTop = tiroRect.top;
+      var tiroBottom = tiroRect.bottom;
+      var tiroLeft = tiroRect.left;
+      var tiroRight = tiroRect.right;
+
+      // Coordenadas das extremidades do meteoro
+      var meteoroTop = meteoroRect.top;
+      var meteoroBottom = meteoroRect.bottom;
+      var meteoroLeft = meteoroRect.left;
+      var meteoroRight = meteoroRect.right;
+
+      // Verifica a colisão
+      if (
+        tiroBottom >= meteoroTop &&
+        tiroTop <= meteoroBottom &&
+        tiroRight >= meteoroLeft &&
+        tiroLeft <= meteoroRight
+      ) {
+        // Colisão detectada, remova o tiro e o meteoro
+        
+        tiro.remove();
+        naveInimigaPretoTotais[i].vida--;
+        if(naveInimigaPretoTotais[i].vida<=0){
+        criarExplosao(meteoroTop,meteoroLeft)
+        naveInimigaPretoTotais[i].remove();
+        pontuacao++;
+        textoPontuacao.textContent = pontuacao;
         }
       }
     }
   }
 }
-function aumentaQuantidadeInimigo() {
-  if(pontuacao>10){
-    intervaloGeracaoInimigo=50;
-  }
-  if(pontuacao>20){
-    intervaloGeracaoInimigo-=1700;
-  }
-  if(pontuacao>30){
-    intervaloGeracaoInimigo-=1600;
-  }
-  if(pontuacao==40){
-    intervaloGeracaoInimigo-=1500;
-  }
-  if(pontuacao==50){
-    intervaloGeracaoInimigo-=1200;
-  }
-  if(pontuacao==60){
-    intervaloGeracaoInimigo-=1000;
-  }
-  if(pontuacao==70){
-    intervaloGeracaoInimigo-=800;
-  }
-  if(pontuacao==80){
-    intervaloGeracaoInimigo-=700;
-  }
-  if(pontuacao==90){
-    intervaloGeracaoInimigo-=700;
-  }
-  if(pontuacao==100){
-    intervaloGeracaoInimigo-=700;
-  }
+function criarExplosao(top, left) {
+  var explosao = document.createElement("div");
+  explosao.classList.add('esplosao');
+  explosao.id = 'explosao';
+  explosao.style.top = top + "px";
+  explosao.style.left = left + "px";
+  explosao.style.backgroundImage = "./imagens/explosao.gif";
+  document.body.appendChild(explosao);
+  setTimeout(function () {
+    explosao.remove();
+  }, 800);
 }
+
+function colisaoNave(top,left){
+  /*var inimigo
+  if(
+
+    if(
+
+    
+  ))*/
+}
+function aumentarDificuldade() {
+  var taxaDeInimigosPadrao;
+  var taxaDeInimigosVermelho;
+  var taxaDeInimigosPreto;
+
+  if (pontuacao <= 10) {
+    taxaDeInimigosPadrao = 2000;
+    taxaDeInimigosVermelho = 10000;
+    taxaDeInimigosPreto = 10000;
+    setInterval(criacaoMeteoros, taxaDeInimigosPadrao);
+  setInterval(criacaoMiniBoss, taxaDeInimigosVermelho);
+  setInterval(criacaoNaveInimigaPreto, taxaDeInimigosPreto);
+  } else if (pontuacao <= 20) {
+    taxaDeInimigosPadrao = 2000; 
+    taxaDeInimigosVermelho = 1000;
+    taxaDeInimigosPreto = 1000;
+    setInterval(criacaoMeteoros, taxaDeInimigosPadrao);
+  setInterval(criacaoMiniBoss, taxaDeInimigosVermelho);
+  setInterval(criacaoNaveInimigaPreto, taxaDeInimigosPreto);
+  } else if (pontuacao <= 30) {
+    taxaDeInimigosPadrao = 1000; 
+    taxaDeInimigosVermelho = 9000;
+    taxaDeInimigosPreto = 5000;
+    setInterval(criacaoMeteoros, taxaDeInimigosPadrao);
+  setInterval(criacaoMiniBoss, taxaDeInimigosVermelho);
+  setInterval(criacaoNaveInimigaPreto, taxaDeInimigosPreto);
+  }
+  else if(pontuacao <= 40){
+    taxaDeInimigosPadrao = 900; 
+    taxaDeInimigosVermelho = 7000;
+    taxaDeInimigosPreto = 4000;
+    setInterval(criacaoMeteoros, taxaDeInimigosPadrao);
+  setInterval(criacaoMiniBoss, taxaDeInimigosVermelho);
+  setInterval(criacaoNaveInimigaPreto, taxaDeInimigosPreto);
+  }
+  else {
+    taxaDeInimigosPadrao = 1000; 
+    taxaDeInimigosVermelho = 1000;
+    taxaDeInimigosPreto = 1000;
+    setInterval(criacaoMeteoros, taxaDeInimigosPadrao);
+  setInterval(criacaoMiniBoss, taxaDeInimigosVermelho);
+  setInterval(criacaoNaveInimigaPreto, taxaDeInimigosPreto);
+  }
+  
+}
+
+aumentarDificuldade();

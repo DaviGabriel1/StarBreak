@@ -33,6 +33,12 @@ canvas {
     position: absolute;
     background-image: url(./imagens/naveInimigaPadrao.PNG);
 }
+.naveInimigaPreto {
+    width: 150px;
+    height: 100px;
+    position: absolute;
+    background-image: url(./imagens/naveInimigaPreto.PNG);
+}
 .miniBoss {
     width: 348px;
     height: 279px;
