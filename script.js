@@ -59,7 +59,8 @@ var vidaInimigoVermelho=60;
 var vidaInimigoPreto=9;
 var quantPowerUps=10;
 var powerupTotais;
-var powerUpVelocidadeAtivado;
+var powerUpVelocidadeAtivado=false;
+var powerUpTiroAtivado = false;
 
 window.addEventListener('resize', function () {
   canvas.width = window.screen.width;
@@ -108,7 +109,8 @@ function animate() {
     verificarDerrota();
     controlaMiniBoss();
     controlaNaveInimigaPreto();
-    controlaPowerUps();
+    controlaPowerUpVelocidade();
+    controlaPowerUpTiro();
     verificarColisaoPowerUps();
     // Repete a animação
     requestAnimationFrame(animate);
@@ -161,7 +163,12 @@ function atualizarMovimento() {
 // Adicione um evento de tiro (por exemplo, pressionando a barra de espaço)
 document.addEventListener('keydown', (event) => {
   if (event.key === ' ') {
+    if(!powerUpTiroAtivado){
     atirar();
+    }
+    else {
+      atirarComPowerUp();
+    }
   }
 });
 
@@ -189,6 +196,41 @@ function atirar() {
       }, 10);
       
 }
+
+function atirarComPowerUp(){
+  const tiros = [];
+
+  // Cria três tiros
+  for (var i = 0; i < 3; i++) {
+    const tiro = document.createElement('div');
+    tiro.classList.add('tiro');
+    tiro.id = 'tiro' + i; // Adicione um ID exclusivo para cada tiro
+    document.body.appendChild(tiro);
+    const personagemRect = navePrincipal.getBoundingClientRect();
+
+    // Define a posição horizontal para os tiros ao lado um do outro
+    const tiroLeft = (personagemRect.left + personagemRect.width / 2 - 10) + i * 20;
+
+    tiro.style.left = tiroLeft + 'px';
+    tiro.style.top = (personagemRect.top + personagemRect.height / 2) + 'px';
+
+    // Cria um intervalo de disparo para cada tiro
+    const tiroInterval = setInterval(() => {
+      const tiroRect = tiro.getBoundingClientRect();
+      if (tiroRect.top > 0) {
+        backgroundAudio.play();
+        tiro.style.top = (parseInt(tiro.style.top) || 0) - velocidadeTiro + 'px';
+        verificarColisao(tiro);
+      } else {
+        clearInterval(tiroInterval);
+        document.body.removeChild(tiro);
+      }
+    }, 10);
+
+    // Adicione o tiro à lista de tiros
+    tiros.push(tiro);
+}}
+
 function criacaoMeteoros (){
   var x = (Math.random()*tamanhoTelaLargura)-150;
   var y=-100;
@@ -306,7 +348,7 @@ for (var i = 0; i < tam; i++) {
 }
 }
 
-function criarPowerUps(){
+function criarPowerUpVelocidade(){
   var x = (Math.random()*tamanhoTelaLargura);
   var y=0;
   var powerUpVelocidade = document.createElement("div"); //power up velocidade
@@ -331,7 +373,7 @@ function criarPowerUpTiro(){ //TODO power up tiro controle
   quantPowerUps--;
 }
 
-function controlaPowerUps(){
+function controlaPowerUpVelocidade(){
   powerupTotais = document.getElementsByClassName("power-up-velocidade");
   var tam = powerupTotais.length;
   for (var i = 0; i < tam; i++) {
@@ -346,7 +388,21 @@ function controlaPowerUps(){
     }
   }
 }
-
+function controlaPowerUpTiro(){
+  powerupTotais = document.getElementsByClassName("power-up-maisTiro");
+  var tam = powerupTotais.length;
+  for (var i = 0; i < tam; i++) {
+    if (powerupTotais[i]) {
+      var pi = powerupTotais[i].offsetTop;
+      pi += 2;
+      powerupTotais[i].style.top = pi + "px";
+      
+      if (pi > tamanhoTelaAltura+279) {
+        powerupTotais[i].remove();
+      }
+    }
+  }
+}
 
 
 
@@ -545,12 +601,12 @@ function aumentarDificuldade() {
 }
 
 function verificarColisaoPowerUps() {
-  var powerUpTotais = document.getElementsByClassName("power-up-velocidade");
-  
+  var powerUpTotaisVelocidade = document.getElementsByClassName("power-up-velocidade");
+  var powerUpTotaisTiro = document.getElementsByClassName("power-up-maisTiro");
   var navePrincipalRect = navePrincipal.getBoundingClientRect();
 
-  for (var i = 0; i < powerUpTotais.length; i++) {
-    var powerUpRect = powerUpTotais[i].getBoundingClientRect();
+  for (var i = 0; i < powerUpTotaisVelocidade.length; i++) {
+    var powerUpRect = powerUpTotaisVelocidade[i].getBoundingClientRect();
 
     // Coordenadas das extremidades do power-up
     var powerUpTop = powerUpRect.top;
@@ -571,16 +627,84 @@ function verificarColisaoPowerUps() {
       powerUpRight >= naveLeft &&
       powerUpLeft <= naveRight
     ) {
-      powerUpTotais[i].remove();
-      powerUpVelocidadeAtivado= true;
-        step *=2;
-      
+      powerUpTotaisVelocidade[i].remove();
+      powerUpVelocidadeAtivado = true;
+
+      // Altera a variável 'step' para a nova velocidade
+      step = 1.4;
+      exibirIcone();
+      // Define um temporizador para voltar à velocidade normal após 20 segundos
+      setTimeout(function () {
+        step = 0.7;
+        powerUpVelocidadeAtivado = false; // Desativa o power-up
+      }, 20000); // 20 segundos em milissegundos
     }
   }
+
+  
+  for (var i = 0; i < powerUpTotaisTiro.length; i++) {
+    var powerUpRect = powerUpTotaisTiro[i].getBoundingClientRect();
+
+    // Coordenadas das extremidades do power-up
+    var powerUpTop = powerUpRect.top;
+    var powerUpBottom = powerUpRect.bottom;
+    var powerUpLeft = powerUpRect.left;
+    var powerUpRight = powerUpRect.right;
+
+    // Coordenadas das extremidades da nave principal
+    var naveTop = navePrincipalRect.top;
+    var naveBottom = navePrincipalRect.bottom;
+    var naveLeft = navePrincipalRect.left;
+    var naveRight = navePrincipalRect.right;
+
+    // Verifica a colisão
+    if (
+      powerUpBottom >= naveTop &&
+      powerUpTop <= naveBottom &&
+      powerUpRight >= naveLeft &&
+      powerUpLeft <= naveRight
+    ) {
+      powerUpTotaisTiro[i].remove();
+      powerUpTiroAtivado = true;
+      exibirIcone();
+      // Define um temporizador 20 segundos
+      setTimeout(function () {
+        
+        powerUpTiroAtivado = false; // Desativa o power-up
+      }, 20000); // 20 segundos em milissegundos
+    }
+  }
+}
+function exibirIcone(){
+  if(powerUpTiroAtivado){
+  var maisTiroIcone = document.createElement("div");
+  maisTiroIcone.classList.add('icone-mais-tiro');
+  maisTiroIcone.id = 'maisTiroIcone';
+  maisTiroIcone.style.top = 5 + "%";
+  maisTiroIcone.style.left = 95 + "%";
+  maisTiroIcone.style.backgroundImage = "./imagens/power-ups/power-up-maisTiro.png";
+  document.body.appendChild(maisTiroIcone);
+  setTimeout(function () {
+  maisTiroIcone.remove();
+  }, 20000);
+} else if(powerUpVelocidadeAtivado){
+  var velocidadeIcone = document.createElement("div");
+  velocidadeIcone.classList.add('icone-velocidade');
+  velocidadeIcone.id = 'velocidadeIcone';
+  velocidadeIcone.style.top = 5 + "%";
+  velocidadeIcone.style.left = 95 + "%";
+  velocidadeIcone.style.backgroundImage = "./imagens/power-ups/power-up-velocidade-Icone.png";
+  document.body.appendChild(velocidadeIcone);
+  setTimeout(function () {
+  velocidadeIcone.remove();
+  }, 20000);
+}
+
+  
+
 }
 
 aumentarDificuldade();
 
-setInterval(criarPowerUps, 1500);
-
-//TODO: tempo de powerUp
+setInterval(criarPowerUpVelocidade, 60000); //a cada 90s
+setInterval(criarPowerUpTiro, 90000);

@@ -90,3 +90,15 @@ html {
     width: 100%;
     position: fixed;
 }
+.icone-mais-tiro{
+    width: 64px;
+    height: 64px;
+    position: absolute;
+    background-image: url(./imagens/power-ups/power-up-maisTiro-Icone.png);
+}
+.icone-velocidade{
+    width: 64px;
+    height: 64px;
+    position: absolute;
+    background-image: url(./imagens/power-ups/power-up-velocidade-Icone.png);
+}
