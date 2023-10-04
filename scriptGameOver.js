@@ -1,4 +1,3 @@
-import ('./script');
-var pontuacao = document.getElementById("pontuacaoGameOver");
-var pontuacaoJogo = document.getElementById("pontuacao").textContent;
-pontuacao.textContent = pontuacaoJogo;
+const conteudoTransferido = localStorage.getItem('conteudoTransferido');
+document.getElementById('pontuacaoGameOver').innerHTML = conteudoTransferido;
+console.log(conteudoTransferido);

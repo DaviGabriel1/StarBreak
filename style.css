@@ -85,6 +85,20 @@ canvas {
     border-radius: 65px;
     background-image: url(./imagens/power-ups/power-up-maisTiro.png);
 }
+.power-up-vida{
+    width: 32px;
+    height: 32px;
+    position: absolute;
+    border-radius: 65px;
+    background-image: url(./imagens/power-ups/power-up-vida.png)
+}
+.power-up-dano{
+    width: 32px;
+    height: 32px;
+    position: absolute;
+    border-radius: 65px;
+    background-image: url(./imagens/power-ups/power-up-dano.png)
+}
 html {
     height: 100%;
     width: 100%;
@@ -102,3 +116,10 @@ html {
     position: absolute;
     background-image: url(./imagens/power-ups/power-up-velocidade-Icone.png);
 }
+.icone-dano{
+    width: 64px;
+    height: 64px;
+    position: absolute;
+    background-image: url(./imagens/power-ups/power-up-dano-Icone.png)
+}
+
