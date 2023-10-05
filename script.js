@@ -65,6 +65,7 @@ var powerUpDanoAtivado = false;
 var pontuacaoTotal;
 
 
+
 window.addEventListener('resize', function () {
   canvas.width = window.screen.width;
   canvas.height = window.screen.height;
@@ -469,7 +470,7 @@ function controlaPowerUpDano(){
 function verificarDerrota(){
   if(vidaPlaneta ==0){
     pontuacaoTotal = pontuacao;
-    
+
   window.location.href = "telaGameOver.html";
 }}
 
@@ -769,6 +770,58 @@ function verificarColisaoPowerUps() {
       powerUpLeft <= naveRight
     ) {
       powerUpTotaisVida[i].remove();
+      if(vidaPlaneta ==100){
+        break;
+      }
+      else if(vidaPlaneta == 90){
+        var vidaInteira = document.getElementById("vida5");
+      vidaInteira.src = "./imagens/coracao.png";
+      vidaInteira.style.width =30+"px";
+      }
+      else if(vidaPlaneta == 80){
+        var vidaInteira = document.getElementById("vida5");
+        vidaInteira.src = "./imagens/meioCoracao.png";
+        vidaInteira.style.width =30+"px";
+        vidaInteira.style.display="block";
+      }
+      else if(vidaPlaneta == 70){
+        var vidaInteira = document.getElementById("vida4");
+      vidaInteira.src = "./imagens/coracao.png";
+      vidaInteira.style.width =30+"px";
+      }
+      else if(vidaPlaneta == 60){
+        var vidaInteira = document.getElementById("vida4");
+        vidaInteira.src = "./imagens/meioCoracao.png";
+      vidaInteira.style.width =30+"px";
+      vidaInteira.style.display="block";
+      }
+      else if(vidaPlaneta == 50){
+        var vidaInteira = document.getElementById("vida3");
+      vidaInteira.src = "./imagens/coracao.png";
+      vidaInteira.style.width =30+"px";
+      }
+      else if(vidaPlaneta == 40){
+        var vidaInteira = document.getElementById("vida3");
+        vidaInteira.src = "./imagens/meioCoracao.png";
+      vidaInteira.style.width =30+"px";
+      vidaInteira.style.display="block";
+      }
+      else if(vidaPlaneta == 30){
+        var vidaInteira = document.getElementById("vida2");
+      vidaInteira.src = "./imagens/coracao.png";
+      vidaInteira.style.width =30+"px";
+      }
+      else if(vidaPlaneta == 20){
+        var vidaInteira = document.getElementById("vida2");
+        vidaInteira.src = "./imagens/meioCoracao.png";
+      vidaInteira.style.width =30+"px";
+      vidaInteira.style.display="block";
+      }
+      else if(vidaPlaneta == 10){
+        var vidaInteira = document.getElementById("vida1");
+      vidaInteira.src = "./imagens/coracao.png";
+      vidaInteira.style.width =30+"px";
+      }
       vidaPlaneta+=10;
     
     }
@@ -897,5 +950,11 @@ function alterarVida(){
 aumentarDificuldade();
 setInterval(criarPowerUpVelocidade, 100000); //a cada 90s
 setInterval(criarPowerUpTiro, 60000);
-setInterval(criarPowerUpVida, 160000);
+setInterval(criarPowerUpVida, 40000);
 setInterval(criacaoPowerUpDano, 220000);
+
+if(vidaPlaneta==0){
+const pontuacaoFinal = document.getElementById("pontuacaoGameOver");
+pontuacaoFinal.getContext = pontuacaoTotal;
+console.log(pontuacaoFinal)
+}
