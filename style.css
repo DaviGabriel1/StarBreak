@@ -122,3 +122,26 @@ html {
     position: absolute;
     background-image: url(./imagens/power-ups/power-up-dano-Icone.png)
 }
+.logo{
+    position: absolute;
+    gap: 6px;
+}
+#vida1{
+    top: 7%;
+}
+#vida2{
+    left: 40px;
+    top: 7%;
+}
+#vida3{
+    left: 70px;
+    top: 7%;
+}
+#vida4{
+    left: 100px;
+    top: 7%;
+}
+#vida5{
+    left: 130px;
+    top: 7%;
+}
