@@ -54,8 +54,8 @@ var naveInimigaPretoTotais;
 
 var alcancouLadoDireito;
 var alcancouLadoEsquerdo;
-
 var vidaInimigoPadrao=3;
+
 var vidaInimigoVermelho=60;
 var vidaInimigoPreto=9;
 var quantPowerUps=10;
@@ -429,7 +429,7 @@ function controlaPowerUpVida(){
       pi += 2;
       powerupTotais[i].style.top = pi + "px";
       
-      if (pi > tamanhoTelaAltura+45) {
+      if (pi > tamanhoTelaAltura+54) {
         powerupTotais[i].remove();
       }
     }
@@ -839,10 +839,12 @@ function exibirIcone(){
   danoIcone.remove();
   }, 20000);
 }
-
-  
-
 }
+
+
+
+
+
 
 aumentarDificuldade();
 setInterval(criarPowerUpVelocidade, 100000); //a cada 90s
