@@ -11,10 +11,9 @@ var stars = [];
 
 
 const navePrincipal = document.getElementById('navePrincipal');// Transportar o CSS
-let posicaoHorizontal = 50;
-let posicaoVertical = 95;
+let posicaoHorizontal = 50; //localizacao da nave
+let posicaoVertical = 95; //localizacao da nave
 let step = 0.7; //passo para cada click
-
 var velocidadeTiro = 5; //velocidade dos tiros (pode variar com power up)
 
 var tamanhoTelaLargura = window.innerWidth;
@@ -25,44 +24,38 @@ var quantminiBoss = 70;
 var meteorosTotais;
 var miniBossTotais;
 
-var tiros;
+var tiros; // array de tiros
 
-var velocidadeMeteoro = 3;
+var velocidadeMeteoro = 3; //velocidade da nave
 
-var vidaPlaneta = 100;
-var textoVida = document.getElementById("quantVida");
+var vidaPlaneta = 100; //vida total do planeta
 
-var pontuacao = 0;
+var pontuacao = 0; //ponntuacao inicial
 var textoPontuacao = document.getElementById("pontuacao");
 textoPontuacao.textContent = pontuacao;
 
-var vidaInimigoPadrao = [];
-var velocidademiniBoss = 1;
+var velocidademiniBoss = 1; //velocidade nave vermelha
 
-var teclaPressionada;
+var teclaPressionada; // var para limitar as teclas pressionadas
 
-const backgroundAudio = new Audio('./trilhasSonoras/efeitosonorotiro.mp3'); // Substitua com o caminho do seu arquivo de som
+const backgroundAudio = new Audio('./trilhasSonoras/efeitosonorotiro.mp3'); //som de fundo
 
 const intervaloDeTiro = 200; // Intervalo de tiro em milissegundos
 
-var vidaInimigoatt =1;
-var intervaloGeracaoInimigo = 2000;
+var quantnaveInimigaPretos; //controlar numero de inimigos na tela
+var naveInimigaPretoTotais; //var para iterar os inimigos e controlar as colisoes
 
-var quantnaveInimigaPretos;
-var naveInimigaPretoTotais;
-
-var alcancouLadoDireito;
-var alcancouLadoEsquerdo;
-var vidaInimigoPadrao=3;
+var alcancouLadoDireito; //var para delimitar movimentação do inimigo preto
+var alcancouLadoEsquerdo;//var para delimitar movimentação do inimigo preto
+var vidaInimigoPadrao=3; //vida total do inimigo azul
 
 var vidaInimigoVermelho=60;
 var vidaInimigoPreto=9;
-var quantPowerUps=10;
-var powerupTotais;
-var powerUpVelocidadeAtivado=false;
-var powerUpTiroAtivado = false;
-var powerUpDanoAtivado = false;
-var pontuacaoTotal;
+var powerupTotais; // iterar os power-ups e controlar as colisoes de cada um
+var powerUpVelocidadeAtivado=false; //flag para ativar efeito do power-up apenas quando for true
+var powerUpTiroAtivado = false;//flag para ativar efeito do power-up apenas quando for true
+var powerUpDanoAtivado = false;//flag para ativar efeito do power-up apenas quando for true
+var pontuacaoTotal; //pontuacao ao perder (pode ser feito ranking local no futuro)
 
 
 
@@ -109,16 +102,16 @@ function animate() {
             star.y = 0;
         }
     }
-    controlaMeteoros();
-    verificarDerrota();
-    controlaMiniBoss();
-    controlaNaveInimigaPreto();
-    controlaPowerUpVelocidade();
-    controlaPowerUpTiro();
-    controlaPowerUpVida();
-    controlaPowerUpDano();
-    verificarColisaoPowerUps();
-    alterarVida();
+    controlaMeteoros(); //permite a movimentação
+    verificarDerrota(); //analisa se a vida chega a 0
+    controlaMiniBoss();//permite a movimentação
+    controlaNaveInimigaPreto();//permite a movimentação
+    controlaPowerUpVelocidade();//permite a movimentação
+    controlaPowerUpTiro();//permite a movimentação
+    controlaPowerUpVida();//permite a movimentação
+    controlaPowerUpDano();//permite a movimentação
+    verificarColisaoPowerUps(); //analisa a colisao e ativa efeito
+    alterarVida(); //aumenta a vida dependendo do power-up de cura
     // Repete a animação
     requestAnimationFrame(animate);
 }
@@ -130,8 +123,8 @@ function atualizarPosicaoAtualNave() {
   posicaoHorizontal = Math.max(0, Math.min(100, posicaoHorizontal));
   // Garanta que a posição vertical da nave esteja dentro dos limites da tela
   posicaoVertical = Math.max(0, Math.min(100, posicaoVertical));
-    navePrincipal.style.left = posicaoHorizontal+'%';
-    navePrincipal.style.top = posicaoVertical+'%';
+    navePrincipal.style.left = posicaoHorizontal+'%'; //atualiza posição horizontal
+    navePrincipal.style.top = posicaoVertical+'%';  //atualiza posição vertical
 }
 
 let teclasPressionadas = {}; // Objeto para rastrear teclas pressionadas
@@ -149,7 +142,8 @@ document.addEventListener('keyup', (event) => {
   delete teclasPressionadas[event.key]; // Marcar a tecla como liberada
 });
 
-function atualizarMovimento() {
+
+function atualizarMovimento() { //movimenta nave principal
   if ('ArrowLeft' in teclasPressionadas) {
     posicaoHorizontal -= step;
   }
@@ -170,7 +164,7 @@ function atualizarMovimento() {
 // Adicione um evento de tiro (por exemplo, pressionando a barra de espaço)
 document.addEventListener('keydown', (event) => {
   if (event.key === ' ') {
-    if(!powerUpTiroAtivado){
+    if(!powerUpTiroAtivado){ //se o power-up estiver ativado, sairá 3 tiros, caso contrario apenas 1
     atirar();
     }
     else {
@@ -182,16 +176,15 @@ document.addEventListener('keydown', (event) => {
 // Inicie o loop de atualização
 atualizarMovimento();
 function atirar() {
-    const tiro = document.createElement('div');
-    tiro.classList.add('tiro');
-    tiro.id = 'tiro'; 
-    document.body.appendChild(tiro);
-    const personagemRect = navePrincipal.getBoundingClientRect();
-    tiro.style.left = (personagemRect.left + personagemRect.width / 2) + 'px';
-    tiro.style.top = (personagemRect.top + personagemRect.height / 2) + 'px';
-    //tiro.style.backgroundImage= 'url(./imagens/lasers/laserPadraov2.png)'
+    const tiro = document.createElement('div'); //cria elemento tiro
+    tiro.classList.add('tiro'); //adiciona uma classe (será usado para personalizar no css)
+    tiro.id = 'tiro'; //add id
+    document.body.appendChild(tiro); //adiciona o elemento no body
+    const personagemRect = navePrincipal.getBoundingClientRect(); //const com as caracteristicas da nave principal
+    tiro.style.left = (personagemRect.left + personagemRect.width / 2) + 'px'; //localizacao do tiro ao inicializar (no meio da nave)
+    tiro.style.top = (personagemRect.top + personagemRect.height / 2) + 'px'; //localizacao do tiro ao inicializar (no meio da nave)
     const tiroInterval = setInterval(() => {
-        const tiroRect = tiro.getBoundingClientRect();
+        const tiroRect = tiro.getBoundingClientRect(); //const com as caracteristicas do tiro
         if (tiroRect.top > 0) {
           backgroundAudio.play();
           tiro.style.top = (parseInt(tiro.style.top) || 0) - velocidadeTiro + 'px';
@@ -204,7 +197,7 @@ function atirar() {
       
 }
 
-function atirarComPowerUp(){
+function atirarComPowerUp(){ //funcao ativada ao efeito do power-up de 3 tiros
   const tiros = [];
 
   // Cria três tiros
@@ -238,7 +231,7 @@ function atirarComPowerUp(){
     tiros.push(tiro);
 }}
 
-function criacaoMeteoros (){
+function criacaoMeteoros (){ //cria naves azul
   var x = (Math.random()*tamanhoTelaLargura)-150;
   var y=-100;
   if(x<150){
@@ -255,7 +248,7 @@ function criacaoMeteoros (){
    // vidaInimigoPadrao.push(3); //inicializar o inimigo com vida 3
     quantMeteoros--;
 }
-function controlaMeteoros() {
+function controlaMeteoros() { //controla nave azul
   meteorosTotais = document.getElementsByClassName("meteoro");
   var tam = meteorosTotais.length;
   for (var i = 0; i < tam; i++) {
@@ -271,7 +264,7 @@ function controlaMeteoros() {
     }
   }
 }
-function criacaoNaveInimigaPreto(){
+function criacaoNaveInimigaPreto(){ //cria nave preta
 var x = (tamanhoTelaLargura/2);
     var y=-100;
     var naveInimigaPreto = document.createElement("div");
@@ -285,7 +278,7 @@ var x = (tamanhoTelaLargura/2);
     //vidaInimigoPadrao.push(3); //inicializar o inimigo com vida 3
     quantnaveInimigaPretos--;
 }
-function controlaNaveInimigaPreto() {
+function controlaNaveInimigaPreto() { //controla nave preta
   naveInimigaPretoTotais = document.getElementsByClassName("naveInimigaPreto");
   var tam = naveInimigaPretoTotais.length;
   for (var i = 0; i < tam; i++) {
@@ -321,7 +314,7 @@ function controlaNaveInimigaPreto() {
   }
 }
 
-function criacaoMiniBoss (){
+function criacaoMiniBoss (){ //cria nave vermelha
   var x = (Math.random()*tamanhoTelaLargura)-348;
   var y=-280;
   if(x<348){
@@ -338,7 +331,7 @@ function criacaoMiniBoss (){
   //vidaInimigoPadrao.push(3); //inicializar o inimigo com vida 3
   quantminiBoss--;
 }
-function controlaMiniBoss() {
+function controlaMiniBoss() { //controla nave vermelha
 miniBossTotais = document.getElementsByClassName("miniBoss");
 var tam = miniBossTotais.length;
 for (var i = 0; i < tam; i++) {
@@ -355,7 +348,7 @@ for (var i = 0; i < tam; i++) {
 }
 }
 
-function criarPowerUpVelocidade(){
+function criarPowerUpVelocidade(){ //cria power-up velocidade
   var x = (Math.random()*tamanhoTelaLargura);
   var y=-33;
   var powerUpVelocidade = document.createElement("div"); //power up velocidade
@@ -367,10 +360,10 @@ function criarPowerUpVelocidade(){
   document.body.appendChild(powerUpVelocidade);
   quantPowerUps--;
 }
-function criarPowerUpTiro(){ //TODO power up tiro controle
+function criarPowerUpTiro(){ //cria power-up de 3 tiros
   var x = (Math.random()*tamanhoTelaLargura);
   var y=-33;
-  var powerUpTiro = document.createElement("div"); //power up Tiro
+  var powerUpTiro = document.createElement("div");
   powerUpTiro.classList.add('power-up-maisTiro')
   powerUpTiro.id = 'power-up-maisTiro';
   powerUpTiro.style.top = y+"px";
@@ -380,7 +373,7 @@ function criarPowerUpTiro(){ //TODO power up tiro controle
   quantPowerUps--;
 }
 
-function controlaPowerUpVelocidade(){
+function controlaPowerUpVelocidade(){  //movimentação power-up velocidade
   powerupTotais = document.getElementsByClassName("power-up-velocidade");
   var tam = powerupTotais.length;
   for (var i = 0; i < tam; i++) {
@@ -395,7 +388,7 @@ function controlaPowerUpVelocidade(){
     }
   }
 }
-function controlaPowerUpTiro(){
+function controlaPowerUpTiro(){ //movimentação dos tiros
   powerupTotais = document.getElementsByClassName("power-up-maisTiro");
   var tam = powerupTotais.length;
   for (var i = 0; i < tam; i++) {
@@ -411,7 +404,7 @@ function controlaPowerUpTiro(){
   }
 }
 
-function criarPowerUpVida(){
+function criarPowerUpVida(){  //add power up vida 
   var x = (Math.random()*tamanhoTelaLargura);
   var y=-33;
   var powerUpVida = document.createElement("div"); //power up Vida
@@ -423,7 +416,7 @@ function criarPowerUpVida(){
   document.body.appendChild(powerUpVida);
 }
 
-function controlaPowerUpVida(){
+function controlaPowerUpVida(){ //movimentação power-up vida
   powerupTotais = document.getElementsByClassName("power-up-vida");
   var tam = powerupTotais.length;
   for (var i = 0; i < tam; i++) {
@@ -438,7 +431,7 @@ function controlaPowerUpVida(){
     }
   }
 }
-function criacaoPowerUpDano(){
+function criacaoPowerUpDano(){ //cria power-up vida 
   var x = (Math.random()*tamanhoTelaLargura);
   var y=-33;
   var powerUpDano = document.createElement("div"); //power up Dano
@@ -449,7 +442,7 @@ function criacaoPowerUpDano(){
   powerUpDano.style.backgroundImage = "./imagens/power-ups/power-up-dano.png"
   document.body.appendChild(powerUpDano);
 }
-function controlaPowerUpDano(){
+function controlaPowerUpDano(){ // controla power-up dano
   powerupTotais = document.getElementsByClassName("power-up-dano");
   var tam = powerupTotais.length;
   for (var i = 0; i < tam; i++) {
@@ -465,8 +458,6 @@ function controlaPowerUpDano(){
   }
 }
 
-
-
 function verificarDerrota(){
   if(vidaPlaneta ==0){
     pontuacaoTotal = pontuacao;
@@ -474,7 +465,7 @@ function verificarDerrota(){
   window.location.href = "telaGameOver.html";
 }}
 
-function verificarColisao(tiro){
+function verificarColisao(tiro){ //analisa colisao do parametro tiro para cada tipo de nave inimiga
   var tiroRect = tiro.getBoundingClientRect();
   var tam = meteorosTotais.length;
   var tamMB = miniBossTotais.length;
@@ -507,6 +498,10 @@ function verificarColisao(tiro){
         
         tiro.remove();
         meteorosTotais[i].vida--;
+        meteorosTotais[i].style.backgroundImage = "./imagens/naveInimigaPadraoDano.PNG"
+        setTimeout(function () {
+          meteorosTotais[i].style.backgroundImage = "./imagens/naveInimigaPadrao.PNG"
+          }, 200);
         if(powerUpDanoAtivado){
           meteorosTotais[i].vida=0;
         }
@@ -614,17 +609,7 @@ function criarExplosao(top, left) {
     explosao.remove();
   }, 800);
 }
-
-function colisaoNave(top,left){
-  /*var inimigo
-  if(
-
-    if(
-
-    
-  ))*/
-}
-function aumentarDificuldade() {
+function aumentarDificuldade() { //aumenta taxa de inimigo de acordo com a pontuacao
   var taxaDeInimigosPadrao;
   var taxaDeInimigosVermelho;
   var taxaDeInimigosPreto;
@@ -670,7 +655,7 @@ function aumentarDificuldade() {
   
 }
 
-function verificarColisaoPowerUps() {  
+function verificarColisaoPowerUps() {  //verifica a colisao de cada power-up (cada elemento de cada classe)
   var powerUpTotaisVelocidade = document.getElementsByClassName("power-up-velocidade");
   var powerUpTotaisTiro = document.getElementsByClassName("power-up-maisTiro");
   var powerUpTotaisVida = document.getElementsByClassName("power-up-vida");
@@ -773,7 +758,7 @@ function verificarColisaoPowerUps() {
       if(vidaPlaneta ==100){
         break;
       }
-      else if(vidaPlaneta == 90){
+      else if(vidaPlaneta == 90){ //diminui a quantidade de vida da interface
         var vidaInteira = document.getElementById("vida5");
       vidaInteira.src = "./imagens/coracao.png";
       vidaInteira.style.width =30+"px";
@@ -859,7 +844,7 @@ function verificarColisaoPowerUps() {
     }
   }
 }
-function exibirIcone(){
+function exibirIcone(){ //sinaliza o power up que está sendo usado
   if(powerUpTiroAtivado){
   var maisTiroIcone = document.createElement("div");
   maisTiroIcone.classList.add('icone-mais-tiro');
@@ -895,7 +880,7 @@ function exibirIcone(){
   }, 20000);
 }
 }
-function alterarVida(){
+function alterarVida(){ //de acordo com o aumento de vida aumentar os corações da interface
   if(vidaPlaneta==90){
   var vidaInteira = document.getElementById("vida5");
   vidaInteira.src = "./imagens/meioCoracao.png";
@@ -942,19 +927,8 @@ function alterarVida(){
   }
 
 }
-
-
-
-
-
 aumentarDificuldade();
-setInterval(criarPowerUpVelocidade, 100000); //a cada 90s
-setInterval(criarPowerUpTiro, 60000);
-setInterval(criarPowerUpVida, 40000);
-setInterval(criacaoPowerUpDano, 220000);
-
-if(vidaPlaneta==0){
-const pontuacaoFinal = document.getElementById("pontuacaoGameOver");
-pontuacaoFinal.getContext = pontuacaoTotal;
-console.log(pontuacaoFinal)
-}
+setInterval(criarPowerUpVelocidade, 100000); //power up velocidade a cada 90s/ 1min e 30s
+setInterval(criarPowerUpTiro, 60000); //power up Tiro a cada 60s / 1 min
+setInterval(criarPowerUpVida, 70000); //power up vida a cada 70s  / 1min e 10s
+setInterval(criacaoPowerUpDano, 180000); //power up velocidade a cada 180s

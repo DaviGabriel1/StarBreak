@@ -15,6 +15,14 @@ canvas {
     left: 50%; /*posição horizontal (meio)*/
     transform: translate(-50%, -50%); /*deixa a nave centralizada*/
 }
+.navePrincipalPlayer2 {
+    width: auto;
+    height: auto;
+    position: absolute;
+    top: 90%; /*altura vertical*/
+    left: 50%; /*posição horizontal (meio)*/
+    transform: translate(-50%, -50%);
+}
 .tiro {
     width: 9px;
     height: 54px;
