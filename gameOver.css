@@ -1,34 +1,115 @@
-body {
-    background: url(./imagens/fundo.gif);
-    background-repeat: no-repeat;
-    background-size: cover;
+@import url('https://fonts.googleapis.com/css?family=Fira+Mono:400');
+*{
+  margin:  0;
+  padding: 0; 
 }
-.game-over {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    text-align: center;
-    background-color: rgba(0, 0, 0, 0.7);
-    padding: 20px;
-    border-radius: 10px;
-    color: white;
-}
-
-button {
-    padding: 10px 20px;
-    background-color: #3498db;
-    border: none;
-    border-radius: 5px;
-    color: white;
-    cursor: pointer;
+body{ 
+  /*display: flex;
+  width: 100vw;
+  height: 100vh;
+  align-items: center;
+  justify-content: center;
+  margin: 0;*/
+  background: url(/imagens/fundo.gif);
+  background-repeat: no-repeat;
+  background-size: cover;
+  color: white;
+  font-family: 'gameplay';
+  letter-spacing: 2;
 }
 
-button:hover {
-    background-color: #2980b9;
+.logo_gameover{
+  font-size: 104px;
+  animation: glitch 1s linear infinite;
 }
-html{
-    width: 100%;
-    height: 100%;
-    position: fixed;
+ 
+@keyframes glitch{
+  2%,64%{
+    transform: translate(2px,0) skew(0deg);
+  }
+  4%,60%{
+    transform: translate(-2px,0) skew(0deg);
+  }
+  62%{
+    transform: translate(0,0) skew(5deg); 
+  }
+}
+
+.logo_gameover:before,
+.logo_gameover:after{
+  content: attr(title);
+  position: absolute;
+  left: 0;
+}
+
+.logo_gameover:before{
+  animation: glitchTop 1s linear infinite;
+  clip-path: polygon(0 0, 100% 0, 100% 33%, 0 33%);
+  -webkit-clip-path: polygon(0 0, 100% 0, 100% 33%, 0 33%);
+}
+
+@keyframes glitchTop{
+  2%,64%{
+    transform: translate(2px,-2px);
+  }
+  4%,60%{
+    transform: translate(-2px,2px);
+  }
+  62%{
+    transform: translate(13px,-1px) skew(-13deg); 
+  }
+}
+
+.logo_gameover:after{
+  animation: glitchBotom 1.5s linear infinite;
+  clip-path: polygon(0 67%, 100% 67%, 100% 100%, 0 100%);
+  -webkit-clip-path: polygon(0 67%, 100% 67%, 100% 100%, 0 100%);
+}
+
+@keyframes glitchBotom{
+  2%,64%{
+    transform: translate(-2px,0);
+  }
+  4%,60%{
+    transform: translate(-2px,0);
+  }
+  62%{
+    transform: translate(-22px,5px) skew(21deg); 
+  }
+}
+/*///////////////////////////////////////////////////////////////////////////////////////////////////////////////*/
+/*///////////////////////////////////////////////////////////////////////////////////////////////////////////////*/
+
+.logo_texto{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
+  height: 100vh;
+  flex-direction: column;
+  gap: 24px;
+}
+
+p{
+  font-size: 40px;
+  letter-spacing: 5;  
+}
+
+.space{
+  letter-spacing: 16px;
+}
+
+.botao{
+  background: none;
+  border: none;
+  color: white;
+  font-family: 'gameplay';
+  font-size: 32px;
+  cursor: pointer;
+  transition: all 0.1s;
+  letter-spacing: 5;
+}
+
+.botao:hover {
+  transform: scale(1.1); 
 }

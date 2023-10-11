@@ -33,6 +33,9 @@ var vidaPlaneta = 100; //vida total do planeta
 var pontuacao = 0; //ponntuacao inicial
 var textoPontuacao = document.getElementById("pontuacao");
 textoPontuacao.textContent = pontuacao;
+var precisao = 100;
+var textoPrecisao = document.getElementById("precisao");
+textoPrecisao.textContent = 100;
 
 var velocidademiniBoss = 1; //velocidade nave vermelha
 
@@ -56,8 +59,18 @@ var powerUpVelocidadeAtivado=false; //flag para ativar efeito do power-up apenas
 var powerUpTiroAtivado = false;//flag para ativar efeito do power-up apenas quando for true
 var powerUpDanoAtivado = false;//flag para ativar efeito do power-up apenas quando for true
 var pontuacaoTotal; //pontuacao ao perder (pode ser feito ranking local no futuro)
+var bossTotais;
+let vidaBoss = 10000;
+var bossCriado=false;
+var tempoParaProximoTiro = 0;
+var projeteis = [];
 
+var tirosAcertados =0;
+var totalDeTiros =0;
 
+var ladoDireitoProjetil=false;
+var ladoEsquerdoProjetil=false;
+var primeiroTiro=false;
 
 window.addEventListener('resize', function () {
   canvas.width = window.screen.width;
@@ -112,6 +125,55 @@ function animate() {
     controlaPowerUpDano();//permite a movimentação
     verificarColisaoPowerUps(); //analisa a colisao e ativa efeito
     alterarVida(); //aumenta a vida dependendo do power-up de cura
+    controlaBoss();
+    if(primeiroTiro){
+      verificarPrecisao();
+    }
+    
+    /*if (tempoParaProximoTiro <= 0) {
+      var bossTotal = document.getElementById('boss');
+      if (bossTotal) {
+        var x = bossTotal.offsetLeft + bossTotal.clientWidth / 2;
+        var y = bossTotal.offsetTop;
+        criarProjetil(x, y);
+      }
+      // Defina um intervalo de tempo para o próximo tiro (em milissegundos)
+      tempoParaProximoTiro = 2000; // Por exemplo, um tiro a cada 2 segundos
+    }
+    for (var i = 0; i < projeteis.length; i++) {
+      var projetil = projeteis[i];
+      projetil.style.top = parseInt(projetil.style.top) + 5 + "px"; // Mova o tiro para baixo
+
+      
+      var horiz= projetil.style.offsetLeft;
+      if(horiz ==tamanhoTelaLargura-150){
+        ladoDireitoProjetil=true;
+        ladoEsquerdoProjetil=false;
+      }
+      else if(horiz==0){
+        ladoDireitoProjetil=false;
+        ladoEsquerdoProjetil=true;
+      }
+      if(ladoEsquerdoProjetil){
+        horiz += 3;
+      }
+      else if(ladoDireitoProjetil){   //TODO: SISTEMA DE TIRO DO BOSS EFICIENTE
+        horiz -=3;
+      }
+      else{
+        horiz +=3;
+      }
+      projetil.style.left = parseInt(projetil.style.left) + horiz + "px";
+      // Verifique colisões ou remova o projetil se ele sair da tela
+      if (projetil.offsetTop > tamanhoTelaAltura) {
+        projetil.parentNode.removeChild(projetil);
+        projeteis.splice(i, 1);
+        i--; // Decrementa o índice para compensar a remoção do projetil
+      }
+    }
+  
+    // Atualize o contador de tempo
+    tempoParaProximoTiro -= 16;*/
     // Repete a animação
     requestAnimationFrame(animate);
 }
@@ -176,6 +238,8 @@ document.addEventListener('keydown', (event) => {
 // Inicie o loop de atualização
 atualizarMovimento();
 function atirar() {
+    totalDeTiros++;
+    primeiroTiro=true;
     const tiro = document.createElement('div'); //cria elemento tiro
     tiro.classList.add('tiro'); //adiciona uma classe (será usado para personalizar no css)
     tiro.id = 'tiro'; //add id
@@ -360,6 +424,60 @@ function criarPowerUpVelocidade(){ //cria power-up velocidade
   document.body.appendChild(powerUpVelocidade);
   quantPowerUps--;
 }
+
+function criarBoss(){
+  var x = tamanhoTelaAltura/2;
+  var y = -1100;
+  var boss = document.createElement("div"); //power up velocidade
+  boss.classList.add('boss')
+  boss.id = 'boss';
+  boss.style.top = y+"px";
+  boss.style.left = x+"px";
+  boss.vida = vidaBoss; //TODO
+  boss.style.backgroundImage = "./imagens/boss.jpg"
+  document.body.appendChild(boss);
+  bossCriado=true;
+  //criarBarraDeVida();
+}
+function controlaBoss(){
+  bossTotais = document.getElementsByClassName("boss");
+  var tam = bossTotais.length;
+  var top;
+  for (var i = 0; i < tam; i++) {
+    if (bossTotais[i]) {
+      if(bossTotais[i].style.top < 5 + "%"){
+      var pi = bossTotais[i].offsetTop;
+      pi += 0.5;
+      top = pi;
+      bossTotais[i].style.top = pi + "px";
+      }  
+    }
+
+  }
+  
+}function criarProjetil(x, y) {
+  var projetil = document.createElement("div");
+  projetil.classList.add('projetil');
+  projetil.style.top = y + "px";
+  projetil.style.left = x + "px";
+  document.body.appendChild(projetil);
+  projeteis.push(projetil);
+}
+/*
+function criarBarraDeVida(){
+  var x = 50;
+  var y = 50;
+  var barraDeVida = document.createElement("div"); //power up velocidade
+  barraDeVida.classList.add('barraDeVida')
+  barraDeVida.id = 'barraDeVida';
+  barraDeVida.style.top = y+"%";
+  barraDeVida.style.left = x+"%";
+  document.body.appendChild(barraDeVida);
+}
+function atualizarBarraDeVida(){
+  const barraDeVida = document.getElementById("barraDeVida");
+  barraDeVida.style.width = vidaBoss+"%";
+}*/
 function criarPowerUpTiro(){ //cria power-up de 3 tiros
   var x = (Math.random()*tamanhoTelaLargura);
   var y=-33;
@@ -457,6 +575,17 @@ function controlaPowerUpDano(){ // controla power-up dano
     }
   }
 }
+function verificarPrecisao(){
+  precisao = tirosAcertados/totalDeTiros
+  if(precisao<10){
+    precisao = precisao*100;
+  }
+  if(precisao<100 && precisao !=0){
+  textoPrecisao.textContent = precisao.toFixed(1);
+  }else{
+    textoPrecisao.textContent = precisao.toFixed(0);
+  }
+}
 
 function verificarDerrota(){
   if(vidaPlaneta ==0){
@@ -495,7 +624,7 @@ function verificarColisao(tiro){ //analisa colisao do parametro tiro para cada t
         tiroLeft <= meteoroRight
       ) {
         // Colisão detectada, remova o tiro e o meteoro
-        
+        tirosAcertados++;
         tiro.remove();
         meteorosTotais[i].vida--;
         meteorosTotais[i].style.backgroundImage = "./imagens/naveInimigaPadraoDano.PNG"
@@ -540,7 +669,7 @@ function verificarColisao(tiro){ //analisa colisao do parametro tiro para cada t
         tiroLeft <= meteoroRight
       ) {
         // Colisão detectada, remova o tiro e o meteoro
-        
+        tirosAcertados++;
         tiro.remove();
         miniBossTotais[i].vida--;
         if(powerUpDanoAtivado){
@@ -581,7 +710,7 @@ function verificarColisao(tiro){ //analisa colisao do parametro tiro para cada t
         tiroLeft <= meteoroRight
       ) {
         // Colisão detectada, remova o tiro e o meteoro
-        
+        tirosAcertados++;
         tiro.remove();
         naveInimigaPretoTotais[i].vida--;
         if(powerUpDanoAtivado){
@@ -590,6 +719,46 @@ function verificarColisao(tiro){ //analisa colisao do parametro tiro para cada t
         if(naveInimigaPretoTotais[i].vida<=0){
         criarExplosao(meteoroTop,meteoroLeft)
         naveInimigaPretoTotais[i].remove();
+        pontuacao++;
+        textoPontuacao.textContent = pontuacao;
+        }
+      }
+    }
+  }
+  for (var i = 0; i < tamNavePreta; i++) {
+    if (bossTotais[i]) {
+      bossTotais[i] = 3;
+      var meteoroRect = bossTotais[i].getBoundingClientRect();
+      const barraDeVida = document.getElementById("barraDeVida");
+
+      // Coordenadas das extremidades do tiro
+      var tiroTop = tiroRect.top;
+      var tiroBottom = tiroRect.bottom;
+      var tiroLeft = tiroRect.left;
+      var tiroRight = tiroRect.right;
+
+      // Coordenadas das extremidades do meteoro
+      var meteoroTop = meteoroRect.top;
+      var meteoroBottom = meteoroRect.bottom;
+      var meteoroLeft = meteoroRect.left;
+      var meteoroRight = meteoroRect.right;
+
+      // Verifica a colisão
+      if (
+        tiroBottom >= meteoroTop &&
+        tiroTop <= meteoroBottom &&
+        tiroRight >= meteoroLeft &&
+        tiroLeft <= meteoroRight
+      ) {
+        // Colisão detectada, remova o tiro e o meteoro
+        tirosAcertados++;
+        tiro.remove();
+        bossTotais[i].vida--; //TODO
+        vidaBoss-=10;
+        if(bossTotais[i].vida<=0){
+        criarExplosao(meteoroTop,meteoroLeft)
+        bossTotais[i].remove();
+      //remover barra de vida
         pontuacao++;
         textoPontuacao.textContent = pontuacao;
         }
@@ -613,7 +782,7 @@ function aumentarDificuldade() { //aumenta taxa de inimigo de acordo com a pontu
   var taxaDeInimigosPadrao;
   var taxaDeInimigosVermelho;
   var taxaDeInimigosPreto;
-
+  /*
   if (pontuacao <= 10) {
     taxaDeInimigosPadrao = 2000;
     taxaDeInimigosVermelho = 10000;
@@ -651,9 +820,43 @@ function aumentarDificuldade() { //aumenta taxa de inimigo de acordo com a pontu
     setInterval(criacaoMeteoros, taxaDeInimigosPadrao);
   setInterval(criacaoMiniBoss, taxaDeInimigosVermelho);
   setInterval(criacaoNaveInimigaPreto, taxaDeInimigosPreto);
-  }
-  
+  }*/
+  const inimigoAzul1 = setInterval(criacaoMeteoros, 2000);//*MODO DE PROGRESSAO */
+  const inimigoPreto1 = setInterval(criacaoNaveInimigaPreto, 50000);
+  const inimigoVermelho1 = setInterval(criacaoMiniBoss, 50000);
+setTimeout(function() {
+  clearInterval(inimigoAzul1,inimigoPreto1,inimigoVermelho1);
+  const inimigoAzul2 = setInterval(criacaoMeteoros, 1500);
+  const inimigoPreto2 = setInterval(criacaoNaveInimigaPreto, 10000);
+  const inimigoVermelho2 = setInterval(criacaoMiniBoss, 30000);
+}, 20000);
+setTimeout(function() {
+  clearInterval(inimigoAzul2,inimigoPreto2,inimigoVermelho2);
+  const inimigoAzul3 = setInterval(criacaoMeteoros, 1000);
+  const inimigoPreto3 = setInterval(criacaoNaveInimigaPreto, 5000);
+  const inimigoVermelho3 = setInterval(criacaoMiniBoss, 10000);
+}, 60000);
+setTimeout(function() {
+  clearInterval(inimigoAzul3,inimigoPreto3,inimigoVermelho3);
+  const inimigoAzul4 = setInterval(criacaoMeteoros, 2000);
+  const inimigoPreto4 = setInterval(criacaoNaveInimigaPreto, 3000);
+  const inimigoVermelho4 = setInterval(criacaoMiniBoss, 10000);
+}, 100000);
+setTimeout(function() {
+  clearInterval(inimigoAzul3,inimigoPreto3,inimigoVermelho3);
+  const inimigoAzul4 = setInterval(criacaoMeteoros, 1500);
+  const inimigoPreto4 = setInterval(criacaoNaveInimigaPreto, 1800);
+  const inimigoVermelho4 = setInterval(criacaoMiniBoss, 5000);
+}, 200000);
+
+/*taxaDeInimigosPadrao = 2000;
+taxaDeInimigosVermelho = 10000;
+taxaDeInimigosPreto = 3000;
+setInterval(criacaoMeteoros, taxaDeInimigosPadrao);
+setInterval(criacaoMiniBoss, taxaDeInimigosVermelho);
+setInterval(criacaoNaveInimigaPreto, taxaDeInimigosPreto);*/ /* MODO DIFICIL */
 }
+
 
 function verificarColisaoPowerUps() {  //verifica a colisao de cada power-up (cada elemento de cada classe)
   var powerUpTotaisVelocidade = document.getElementsByClassName("power-up-velocidade");
@@ -928,7 +1131,8 @@ function alterarVida(){ //de acordo com o aumento de vida aumentar os corações
 
 }
 aumentarDificuldade();
-setInterval(criarPowerUpVelocidade, 100000); //power up velocidade a cada 90s/ 1min e 30s
-setInterval(criarPowerUpTiro, 60000); //power up Tiro a cada 60s / 1 min
+setInterval(criarPowerUpVelocidade, 150000); //power up velocidade a cada 90s/ 1min e 30s
+setInterval(criarPowerUpTiro, 100000); //power up Tiro a cada 60s / 1 min
 setInterval(criarPowerUpVida, 70000); //power up vida a cada 70s  / 1min e 10s
 setInterval(criacaoPowerUpDano, 180000); //power up velocidade a cada 180s
+//setInterval(criarBoss,20000);

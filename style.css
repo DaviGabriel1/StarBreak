@@ -53,6 +53,12 @@ canvas {
     position: absolute;
     background-image: url(./imagens/naveInimigaVermelhaGrande.PNG);
 }
+.boss {
+    width: 900px;
+    height: 538px;
+    position: absolute;
+    background-image: url(./imagens/boss.png);
+}
 #explosao {
     background: url(./imagens/explosao.gif);
     width: 157px;
@@ -78,6 +84,23 @@ canvas {
     color: white;
     position: absolute;
     left: 9%;
+}
+.texto-precisao{
+    color: white;
+    position: absolute;
+    top: 4%;
+}
+#precisao{
+    color: white;
+    position: absolute;
+    left: 7.4%;
+    top: 4%;
+}
+.porcentagem{
+    color: white;
+    position: absolute;
+    left: 10.3%;
+    top: 4%;
 }
 .power-up-velocidade{
     width: 32px;
@@ -130,26 +153,40 @@ html {
     position: absolute;
     background-image: url(./imagens/power-ups/power-up-dano-Icone.png)
 }
+.barraDeVida{
+    width: 200px;
+    height: 20px;
+    background-color: #ccc;
+    border: 1px solid #333;
+    position: absolute;
+}
+.projetil{
+    width: 22px;
+    height: 22px;
+    position: absolute;
+    background-image: url(./imagens/Energy.png);
+    border-radius: 345px;
+}
 .logo{
     position: absolute;
     gap: 6px;
 }
 #vida1{
-    top: 7%;
+    top: 11%;
 }
 #vida2{
     left: 40px;
-    top: 7%;
+    top: 11%;
 }
 #vida3{
     left: 70px;
-    top: 7%;
+    top: 11%;
 }
 #vida4{
     left: 100px;
-    top: 7%;
+    top: 11%;
 }
 #vida5{
     left: 130px;
-    top: 7%;
+    top: 11%;
 }

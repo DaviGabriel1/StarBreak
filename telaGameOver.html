@@ -1,22 +1,26 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="shortcut icon" href="Design sem nome (2)-PhotoRoom.png-PhotoRoom.png" type="image/x-icon">
+    <title>Document</title>
     <link rel="stylesheet" href="./gameOver.css">
-    <link rel="stylesheet" href="./script.js">
-    <title>Game Over</title>
+    <style>
+        @font-face{
+        font-family:'gameplay';
+        src: url('/gameplay.ttf') format(truetype);
+        font-weight: normal;
+        font-style: normal;
+    }
+    </style>
 </head>
 <body>
-    <div class="stars"></div>
-    <div class="game-over">
-        <h1>Game Over</h1>
-        <p>Pontuação: </p> <p id="pontuacaoGameOver">0</p>
-        <a href="menuInicial.html"><button>Reiniciar</button></a>
-    </div>
-    <audio id="background-music" autoplay loop>
-        <source src="./trilhasSonoras/trilhaSonoraMenuSpaceBreak.mp3" type="audio/mpeg"> 
-    </audio>
+    <div class="logo_texto">
+        <div class="logo_gameover" title="GAME OVER">GAME OVER</div>    
+        <p>Jogar Novamente?</p>
+        <div class="space"><a href="./index.html"><button class="botao">SIM</button></a>
+            <a href="./menuInicial.html"><button class="botao">NAO</button></a>
+        </div>
+    </div>    
 </body>
 </html>
