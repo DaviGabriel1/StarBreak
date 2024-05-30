@@ -350,11 +350,11 @@ function controlaNaveInimigaPreto() { //controla nave preta
       var pi = naveInimigaPretoTotais[i].offsetTop;
       pi += velocidadeMeteoro-2;
       var horiz= naveInimigaPretoTotais[i].offsetLeft;
-      if(horiz ==tamanhoTelaLargura-150){
+      if(horiz >=tamanhoTelaLargura-150){
         alcancouLadoDireito=true;
         alcancouLadoEsquerdo=false;
       }
-      else if(horiz==0){
+      else if(horiz<=0){
         alcancouLadoDireito=false;
         alcancouLadoEsquerdo=true;
       }
